@@ -756,19 +756,19 @@
                                     </label>
                                 </div>
                             {/if}
+
+                            <label class="check full">
+                                <input
+                                    type="checkbox"
+                                    bind:checked={
+                                        item.transport_announcements
+                                    }
+                                />
+
+                                Announce switches between SSN and direct
+                                relay in configured Discord channels
+                            </label>
                         {/if}
-
-                        <label class="check full">
-                            <input
-                                type="checkbox"
-                                bind:checked={
-                                    item.transport_announcements
-                                }
-                            />
-
-                            Announce switches between SSN and direct
-                            relay in configured Discord channels
-                        </label>
                     </div>
 
                     <div class="workspace-actions">
