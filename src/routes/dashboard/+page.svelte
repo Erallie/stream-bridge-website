@@ -36,7 +36,7 @@
 
     const api = (
         import.meta.env.PUBLIC_STREAMBRIDGE_API_URL ||
-        'http://localhost:8765'
+        'http://localhost:8766'
     ).replace(/\/$/, '');
 
     const providers = ['discord', 'google', 'twitch', 'kick'];

@@ -5,7 +5,7 @@ The public StreamBridge site and account dashboard. It is a static SvelteKit/Typ
 ## Local development
 
 1. Copy `.env.example` to `.env`.
-2. Set `PUBLIC_STREAMBRIDGE_API_URL` to the public URL of the StreamBridge API, or `http://localhost:8765` during local development.
+2. Set `PUBLIC_STREAMBRIDGE_API_URL` to the public URL of the StreamBridge API, or `http://localhost:8766` during local development.
 3. Run `npm install`.
 4. Run `npm run dev`.
 
