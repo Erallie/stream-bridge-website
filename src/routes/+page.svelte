@@ -3,11 +3,20 @@
 <section class="hero">
 	<div class="eyebrow">Cross-platform community chat</div><h1>Bring every chat<br /><span>across the bridge.</span></h1>
 	<p>StreamBridge keeps Discord, Twitch, YouTube, and Kick talking together—with optional Social Stream Ninja support for even more destinations.</p>
-	<div class="actions"><a class="button" href={`${base}/dashboard`}>Open dashboard</a><a class="button secondary" href="#features">See what it does</a></div>
-	<div class="platform-strip"><span>Discord</span><i>↔</i><span>Twitch</span><i>↔</i><span>YouTube</span><i>↔</i><span>Kick</span></div>
+	<div class="actions">
+        <a class="button" href={`${base}/dashboard`}>Open dashboard</a>
+        <a class="button secondary" href="#features">See what it does</a>
+    </div>
+	<div class="platform-strip">
+        <span>Discord</span><i>↔</i><span>Twitch</span><i>↔</i><span>YouTube</span><i>↔</i><span>Kick</span>
+    </div>
 </section>
 <section class="section" id="features">
-	<div class="section-heading"><div class="eyebrow">Built for real communities</div><h2>One bridge. Two ways to run it.</h2><p>Install the Discord bot, run a standalone streaming bridge, or combine both.</p></div>
+	<div class="section-heading">
+        <div class="eyebrow">Built for real communities</div>
+        <h2>One bridge. Two ways to run it.</h2>
+        <p>Install the Discord bot, run a standalone streaming bridge, or combine both.</p>
+    </div>
 	<div class="feature-grid">
 		<article><b>01</b><h3>Relay everywhere</h3><p>Move chat between enabled platforms while suppressing reflections, duplicate deliveries, and loops.</p></article>
 		<article><b>02</b><h3>Discord-native</h3><p>Forward text channels and voice-channel side chats, with names, avatars, colors, and emotes preserved where possible.</p></article>
@@ -17,4 +26,11 @@
 		<article><b>06</b><h3>Your message format</h3><p>Control direct-relay messages with name, platform, and message placeholders from one dashboard.</p></article>
 	</div>
 </section>
-<section class="cta"><div><div class="eyebrow">Ready when you are</div><h2>Connect your communities.</h2><p>Sign in with the account you already use. Link the rest later.</p></div><a class="button" href={`${base}/dashboard`}>Configure StreamBridge</a></section>
+<section class="cta">
+    <div>
+        <div class="eyebrow">Ready when you are</div>
+        <h2>Connect your communities.</h2>
+        <p>Sign in with the account you already use. Link the rest later.</p>
+    </div>
+    <a class="button" href={`${base}/dashboard`}>Configure StreamBridge</a>
+</section>

@@ -11,8 +11,26 @@
 </svelte:head>
 
 <header class="site-header">
-	<a class="brand" href={`${base}/`} aria-label="StreamBridge home"><span class="brand-mark">⌁</span> StreamBridge</a>
-	<nav aria-label="Main navigation"><a href={`${base}/#features`}>Features</a><a href={`${base}/privacy`}>Privacy</a><a href={`${base}/terms`}>Terms</a><a class="button small" href={`${base}/dashboard`}>Dashboard</a></nav>
+	<a class="brand" href={`${base}/`} aria-label="StreamBridge home">
+        <img class="brand-logo" src={favicon} alt="" />
+        StreamBridge
+    </a>
+	<nav aria-label="Main navigation">
+        <a href={`${base}/#features`}>Features</a>
+        <a href={`${base}/privacy`}>Privacy</a>
+        <a href={`${base}/terms`}>Terms</a>
+        <a class="button small" href={`${base}/dashboard`}>Dashboard</a>
+    </nav>
 </header>
 <main>{@render children()}</main>
-<footer><div><strong>StreamBridge</strong><br />One conversation, wherever your community chats.</div><div class="footer-links"><a href={`${base}/privacy`}>Privacy Policy</a><a href={`${base}/terms`}>Terms of Service</a></div></footer>
+<footer>
+    <div>
+        <strong>StreamBridge</strong>
+        <br />
+        One conversation, wherever your community chats.
+    </div>
+    <div class="footer-links">
+        <a href={`${base}/privacy`}>Privacy Policy</a>
+        <a href={`${base}/terms`}>Terms of Service</a>
+    </div>
+</footer>
