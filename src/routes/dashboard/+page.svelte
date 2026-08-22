@@ -28,8 +28,9 @@
         transport_announcements: boolean;
         enabled: boolean;
         connections: Connection[];
-        discord_forward_channel_ids: string[];
-        discord_receive_channel_id: string | null;
+        discord_channel_id: string | null;
+        discord_forward_enabled: boolean;
+        discord_receive_enabled: boolean;
         runtime_status: {
             ssn: string;
             direct_platforms: string[];
@@ -82,8 +83,9 @@
             transport_announcements: true,
             enabled: true,
             connections: [],
-            discord_forward_channel_ids: [],
-            discord_receive_channel_id: null,
+            discord_channel_id: null,
+            discord_forward_enabled: true,
+            discord_receive_enabled: true,
             runtime_status: {
                 ssn: 'disconnected',
                 direct_platforms: []
@@ -227,23 +229,6 @@
         ];
     }
 
-    async function refreshSavedConfiguration(): Promise<void> {
-        if (
-            document.visibilityState !== 'visible' ||
-            document.activeElement?.closest('form')
-        ) {
-            return;
-        }
-        try {
-            const data = await request('/dashboard/api/workspaces');
-            const fresh = data.workspaces as Workspace[];
-            mergeSavedWorkspaces(fresh);
-            await loadWorkspaceChannels(workspaces);
-        } catch {
-            // The normal page notices handle errors from user-initiated actions.
-        }
-    }
-
     function auth(provider: string, mode = 'login'): void {
         const returnTo = `${location.origin}${base}/dashboard`;
 
@@ -354,11 +339,6 @@
 
     onMount(() => {
         load();
-        const refreshTimer = window.setInterval(
-            refreshSavedConfiguration,
-            5000
-        );
-        return () => window.clearInterval(refreshTimer);
     });
 </script>
 
@@ -565,8 +545,7 @@
                                 onchange={(event) => {
                                     item.discord_guild_id =
                                         event.currentTarget.value || null;
-                                    item.discord_forward_channel_ids = [];
-                                    item.discord_receive_channel_id = null;
+                                    item.discord_channel_id = null;
                                     if (item.discord_guild_id) {
                                         loadDiscordChannels(
                                             item.discord_guild_id
@@ -593,41 +572,18 @@
                         </label>
 
                         {#if item.discord_guild_id}
-                            <label>
-                                Discord channels forwarded
-
-                                <span class="muted">
-                                    Select any number of text channels or
-                                    voice-channel side chats.
-                                </span>
+                            <label class="full">
+                                Discord relay channel
 
                                 <select
-                                    multiple
-                                    size="6"
-                                    bind:value={
-                                        item.discord_forward_channel_ids
-                                    }
-                                >
-                                    {#each discordChannels(item) as channel}
-                                        <option value={channel.id}>
-                                            #{channel.name} ({channel.type})
-                                        </option>
-                                    {/each}
-                                </select>
-                            </label>
-
-                            <label>
-                                Discord receiving channel
-
-                                <span class="muted">Optional</span>
-
-                                <select
-                                    bind:value={
-                                        item.discord_receive_channel_id
+                                    bind:value={item.discord_channel_id}
+                                    required={
+                                        item.discord_forward_enabled ||
+                                        item.discord_receive_enabled
                                     }
                                 >
                                     <option value="">
-                                        Do not send platform chat to Discord
+                                        Select a channel
                                     </option>
 
                                     {#each discordChannels(item) as channel}
@@ -636,7 +592,36 @@
                                         </option>
                                     {/each}
                                 </select>
+
+                                <span class="muted">
+                                    The same text channel or voice-channel
+                                    side chat is used in both directions.
+                                </span>
                             </label>
+
+                            <div class="checks full">
+                                <label class="check">
+                                    <input
+                                        type="checkbox"
+                                        bind:checked={
+                                            item.discord_forward_enabled
+                                        }
+                                    />
+
+                                    Forward messages from Discord
+                                </label>
+
+                                <label class="check">
+                                    <input
+                                        type="checkbox"
+                                        bind:checked={
+                                            item.discord_receive_enabled
+                                        }
+                                    />
+
+                                    Forward messages to Discord
+                                </label>
+                            </div>
                         {/if}
 
                         <label class="full">
