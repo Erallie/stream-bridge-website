@@ -168,6 +168,23 @@
                 item.id = result.id;
             }
 
+            await Promise.all(
+                item.connections.map((connection) =>
+                    request(
+                        `/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`,
+                        {
+                            method: 'PUT',
+                            body: JSON.stringify({
+                                provider_user_id:
+                                    connection.provider_user_id,
+                                enabled: connection.enabled,
+                                settings: connection.settings
+                            })
+                        }
+                    )
+                )
+            );
+
             saved = `${item.name} saved`;
 
             await load();
@@ -193,29 +210,27 @@
         );
     }
 
-    async function setConnection(
+    function setConnection(
         item: Workspace,
         provider: string,
         identity: Identity,
         enabled: boolean
-    ): Promise<void> {
-        if (!item.id) {
-            return;
-        }
-
-        await request(
-            `/dashboard/api/workspaces/${item.id}/connections/${provider}`,
-            {
-                method: 'PUT',
-                body: JSON.stringify({
-                    provider_user_id: identity.provider_user_id,
-                    enabled,
-                    settings: {}
-                })
-            }
+    ): void {
+        const existing = item.connections.find(
+            (connection) => connection.provider === provider
         );
 
-        await load();
+        item.connections = [
+            ...item.connections.filter(
+                (connection) => connection.provider !== provider
+            ),
+            {
+                provider,
+                provider_user_id: identity.provider_user_id,
+                enabled,
+                settings: existing?.settings || {}
+            }
+        ];
     }
 
     function toggleTarget(
@@ -463,8 +478,10 @@
                             <span class="muted">Optional</span>
 
                             <input
+                                type="password"
                                 bind:value={item.ssn_session_id}
                                 autocomplete="off"
+                                spellcheck="false"
                             />
                         </label>
 
@@ -513,9 +530,10 @@
                             </strong>
 
                             <p class="muted">
-                                Link an account above, save this
-                                bridge, then choose which accounts it
-                                may use when SSN is unavailable.
+                                Link an account above, then choose
+                                which accounts this bridge may use
+                                when SSN is unavailable. Changes take
+                                effect when you press Save bridge.
                             </p>
 
                             <div class="checks">
@@ -534,7 +552,7 @@
                                     <label class="check">
                                         <input
                                             type="checkbox"
-                                            disabled={!item.id || !identity}
+                                            disabled={!identity}
                                             checked={Boolean(
                                                 connected?.enabled
                                             )}
