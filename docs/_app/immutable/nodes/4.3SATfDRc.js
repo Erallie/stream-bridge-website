@@ -1,4 +1,4 @@
-import{F as e,K as t,S as n,X as r,b as i,f as a,h as o,j as s,q as c}from"../chunks/LgEKNJTL.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Privacy Policy\r
+import{$ as e,C as t,P as n,R as r,T as i,X as a,Y as o,h as s,v as c}from"../chunks/CcU_q1iF.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Privacy Policy\r
   \r
 **Last updated:** August 18, 2026\r
 \r
@@ -446,4 +446,4 @@ For privacy questions, requests, or complaints:\r
 \r
 **Operator:** Gozar Productions LLC \r
 **Email:** contact@gozarproductions.com\r
-`,d=n(`<meta name="description" content="StreamBridge privacy policy"/>`),f=n(`<article class="page legal"></article>`);function p(n,p){c(p,!0);let m=l(u);var h=f();a(`7ke6fz`,t=>{var n=d();s(()=>{e.title=`Privacy Policy — StreamBridge`}),i(t,n)}),o(h,()=>m,!0),r(h),i(n,h),t()}export{p as component};
+`,d=i(`<meta name="description" content="StreamBridge privacy policy"/>`),f=i(`<article class="page legal"></article>`);function p(i,p){a(p,!0);let m=l(u);var h=f();s(`7ke6fz`,e=>{var i=d();n(()=>{r.title=`Privacy Policy — StreamBridge`}),t(e,i)}),c(h,()=>m,!0),e(h),t(i,h),o()}export{p as component};

@@ -1,4 +1,4 @@
-import{F as e,K as t,S as n,X as r,b as i,f as a,h as o,j as s,q as c}from"../chunks/LgEKNJTL.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Terms of Service\r
+import{$ as e,C as t,P as n,R as r,T as i,X as a,Y as o,h as s,v as c}from"../chunks/CcU_q1iF.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Terms of Service\r
 \r
 **Last updated:** August 18, 2026\r
 \r
@@ -349,4 +349,4 @@ These Terms, together with the StreamBridge Privacy Policy and any applicable wr
 Questions about these Terms may be sent to:\r
 \r
 **Operator:** Gozar Productions LLC \r
-**Email:** contact@gozarproductions.com`,d=n(`<meta name="description" content="StreamBridge terms of service"/>`),f=n(`<article class="page legal"></article>`);function p(n,p){c(p,!0);let m=l(u);var h=f();a(`1e0rsuc`,t=>{var n=d();s(()=>{e.title=`Terms of Service — StreamBridge`}),i(t,n)}),o(h,()=>m,!0),r(h),i(n,h),t()}export{p as component};
+**Email:** contact@gozarproductions.com`,d=i(`<meta name="description" content="StreamBridge terms of service"/>`),f=i(`<article class="page legal"></article>`);function p(i,p){a(p,!0);let m=l(u);var h=f();s(`1e0rsuc`,e=>{var i=d();n(()=>{r.title=`Terms of Service — StreamBridge`}),t(e,i)}),c(h,()=>m,!0),e(h),t(i,h),o()}export{p as component};
