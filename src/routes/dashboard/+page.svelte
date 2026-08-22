@@ -74,28 +74,6 @@
     let discordGuilds = $state<DiscordGuild[]>([]);
     let channelsByGuild = $state<Record<string, DiscordChannel[]>>({});
 
-    function createBlankWorkspace(): Workspace {
-        return {
-            name: 'My stream',
-            discord_guild_id: null,
-            ssn_session_id: null,
-            ssn_password: null,
-            ssn_targets: ['twitch', 'youtube', 'kick'],
-            relay_template: '{name} ({platform}) said: {message}',
-            transport_announcements: true,
-            enabled: true,
-            connections: [],
-            discord_channel_id: null,
-            discord_enabled: false,
-            discord_forward_enabled: true,
-            discord_receive_enabled: true,
-            runtime_status: {
-                ssn: 'disconnected',
-                direct_platforms: []
-            }
-        };
-    }
-
     function providerName(provider: string): string {
         if (provider === 'google') {
             return 'Google / YouTube';
@@ -269,18 +247,14 @@
         saveTarget = item;
 
         try {
-            const path = item.id
-                ? `/dashboard/api/workspaces/${item.id}`
-                : '/dashboard/api/workspaces';
+            if (!item.id) {
+                throw new Error('Your bridge has not finished loading');
+            }
 
-            const result = await request(path, {
-                method: item.id ? 'PATCH' : 'POST',
+            await request(`/dashboard/api/workspaces/${item.id}`, {
+                method: 'PATCH',
                 body: JSON.stringify(item)
             });
-
-            if (!item.id) {
-                item.id = result.id;
-            }
 
             await Promise.all(
                 item.connections.map((connection) =>
@@ -306,20 +280,6 @@
                     ? caughtError.message
                     : 'Could not save workspace';
         }
-    }
-
-    async function remove(item: Workspace): Promise<void> {
-        if (!item.id || !confirm(`Delete ${item.name}?`)) {
-            return;
-        }
-
-        await request(`/dashboard/api/workspaces/${item.id}`, {
-            method: 'DELETE'
-        });
-
-        workspaces = workspaces.filter(
-            (workspace) => workspace.id !== item.id
-        );
     }
 
     function setConnection(
@@ -475,37 +435,14 @@
         <section class="workspace">
             <div class="workspace-header">
                 <div>
-                    <h2>Your bridges</h2>
+                    <h2>Your bridge</h2>
 
                     <p class="muted">
-                        Choose a Discord server you administer, or
-                        create a standalone bridge without Discord.
+                        Configure chat relay for your connected streaming
+                        accounts, with or without Discord.
                     </p>
                 </div>
-
-                <button
-                    class="button"
-                    onclick={() => {
-                        workspaces = [
-                            ...workspaces,
-                            createBlankWorkspace()
-                        ];
-                    }}
-                >
-                    New bridge
-                </button>
             </div>
-
-            {#if workspaces.length === 0}
-                <div class="panel">
-                    <h3>No bridges yet</h3>
-
-                    <p class="muted">
-                        Create one to begin configuring relay
-                        connections.
-                    </p>
-                </div>
-            {/if}
 
             {#each workspaces as item}
                 <form
@@ -779,15 +716,6 @@
                             Save bridge
                         </button>
 
-                        {#if item.id}
-                            <button
-                                class="button danger"
-                                type="button"
-                                onclick={() => remove(item)}
-                            >
-                                Delete
-                            </button>
-                        {/if}
                     </div>
 
                     {#if saveTarget === item && saveError}
