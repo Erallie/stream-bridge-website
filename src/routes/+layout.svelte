@@ -24,11 +24,20 @@
 </header>
 <main>{@render children()}</main>
 <footer>
-    <div>
-        <strong>StreamBridge</strong>
-        <br />
-        One conversation, wherever your community chats.
+    <div class="footer-brand">
+        <img
+            class="footer-logo"
+            src={favicon}
+            alt="StreamBridge logo"
+        />
+
+        <div>
+            <strong>StreamBridge</strong>
+            <br />
+            One conversation, wherever your community chats.
+        </div>
     </div>
+
     <div class="footer-links">
         <a href={`${base}/privacy`}>Privacy Policy</a>
         <a href={`${base}/terms`}>Terms of Service</a>
