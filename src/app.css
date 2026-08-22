@@ -457,6 +457,15 @@ textarea:focus {
     margin: 8px 0;
 }
 
+.legal .heading-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.legal .heading-link:hover {
+    text-decoration: underline;
+}
+
 /* Responsive layout */
 
 @media (max-width: 800px) {
