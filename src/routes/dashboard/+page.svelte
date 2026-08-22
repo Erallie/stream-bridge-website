@@ -152,6 +152,14 @@
                 await loadWorkspaceChannels(workspaces);
             }
         } catch (caughtError) {
+            me = {
+                authenticated: false,
+                identities: []
+            };
+            workspaces = [];
+            discordGuilds = [];
+            channelsByGuild = {};
+            loading = false;
             error =
                 caughtError instanceof Error
                     ? caughtError.message
@@ -382,7 +390,7 @@
         </div>
     {/if}
 
-    {#if loading}
+    {#if loading && !error}
         <div class="panel">
             Loading your bridge…
         </div>
