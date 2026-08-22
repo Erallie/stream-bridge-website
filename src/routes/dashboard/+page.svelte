@@ -61,6 +61,8 @@
     let loading = $state(true);
     let error = $state('');
     let saved = $state('');
+    let saveError = $state('');
+    let saveTarget = $state<Workspace | null>(null);
 
     let me = $state<AccountState>({
         authenticated: false,
@@ -70,7 +72,6 @@
     let workspaces = $state<Workspace[]>([]);
     let discordGuilds = $state<DiscordGuild[]>([]);
     let channelsByGuild = $state<Record<string, DiscordChannel[]>>({});
-    const dirtyWorkspaces = new WeakSet<Workspace>();
 
     function createBlankWorkspace(): Workspace {
         return {
@@ -135,23 +136,56 @@
         return body;
     }
 
+    async function initialRequest(path: string): Promise<any> {
+        try {
+            return await request(path);
+        } catch (caughtError) {
+            if (!(caughtError instanceof TypeError)) {
+                throw caughtError;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            return request(path);
+        }
+    }
+
     async function load(): Promise<void> {
         loading = true;
         error = '';
 
         try {
-            me = await request('/dashboard/api/me');
+            me = await initialRequest('/dashboard/api/me');
 
             if (me.authenticated) {
-                const [data, guildData] = await Promise.all([
-                    request('/dashboard/api/workspaces'),
-                    findIdentity('discord')
-                        ? request('/dashboard/api/discord/guilds')
-                        : Promise.resolve({ guilds: [] })
-                ]);
-                workspaces = data.workspaces;
-                discordGuilds = guildData.guilds;
-                await loadWorkspaceChannels(workspaces);
+                const [workspaceResult, guildResult] =
+                    await Promise.allSettled([
+                        initialRequest('/dashboard/api/workspaces'),
+                        findIdentity('discord')
+                            ? initialRequest('/dashboard/api/discord/guilds')
+                            : Promise.resolve({ guilds: [] })
+                    ]);
+
+                if (workspaceResult.status === 'fulfilled') {
+                    workspaces = workspaceResult.value.workspaces;
+                    try {
+                        await loadWorkspaceChannels(workspaces);
+                    } catch (caughtError) {
+                        error = caughtError instanceof Error
+                            ? caughtError.message
+                            : 'Could not load Discord channels';
+                    }
+                } else {
+                    error = workspaceResult.reason instanceof Error
+                        ? workspaceResult.reason.message
+                        : 'Could not load bridges';
+                }
+
+                if (guildResult.status === 'fulfilled') {
+                    discordGuilds = guildResult.value.guilds;
+                } else if (!error) {
+                    error = guildResult.reason instanceof Error
+                        ? guildResult.reason.message
+                        : 'Could not load Discord servers';
+                }
             }
         } catch (caughtError) {
             me = {
@@ -212,23 +246,6 @@
         ];
     }
 
-    function mergeSavedWorkspaces(fresh: Workspace[]): void {
-        const freshIds = new Set(fresh.map((item) => item.id));
-        workspaces = [
-            ...fresh.map((savedItem) => {
-                const localItem = workspaces.find(
-                    (item) => item.id === savedItem.id
-                );
-                return localItem && dirtyWorkspaces.has(localItem)
-                    ? localItem
-                    : savedItem;
-            }),
-            ...workspaces.filter(
-                (item) => !item.id || !freshIds.has(item.id)
-            )
-        ];
-    }
-
     function auth(provider: string, mode = 'login'): void {
         const returnTo = `${location.origin}${base}/dashboard`;
 
@@ -239,8 +256,9 @@
     }
 
     async function save(item: Workspace): Promise<void> {
-        error = '';
         saved = '';
+        saveError = '';
+        saveTarget = item;
 
         try {
             const path = item.id
@@ -273,14 +291,9 @@
                 )
             );
 
-            dirtyWorkspaces.delete(item);
             saved = `${item.name} saved`;
-
-            const data = await request('/dashboard/api/workspaces');
-            mergeSavedWorkspaces(data.workspaces);
-            await loadWorkspaceChannels(workspaces);
         } catch (caughtError) {
-            error =
+            saveError =
                 caughtError instanceof Error
                     ? caughtError.message
                     : 'Could not save workspace';
@@ -495,8 +508,6 @@
             {#each workspaces as item}
                 <form
                     class="panel workspace"
-                    oninput={() => dirtyWorkspaces.add(item)}
-                    onchange={() => dirtyWorkspaces.add(item)}
                     onsubmit={(event) => {
                         event.preventDefault();
                         const targetsInput = event.currentTarget.elements
@@ -769,6 +780,12 @@
                             </button>
                         {/if}
                     </div>
+
+                    {#if saveTarget === item && saveError}
+                        <div class="notice error">
+                            {saveError}
+                        </div>
+                    {/if}
                 </form>
             {/each}
         </section>
