@@ -1,5 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import { base } from '$app/paths';
+	import '../app.css';
 
 	let { children } = $props();
 </script>
@@ -8,4 +10,9 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
+<header class="site-header">
+	<a class="brand" href={`${base}/`} aria-label="StreamBridge home"><span class="brand-mark">⌁</span> StreamBridge</a>
+	<nav aria-label="Main navigation"><a href={`${base}/#features`}>Features</a><a href={`${base}/privacy`}>Privacy</a><a href={`${base}/terms`}>Terms</a><a class="button small" href={`${base}/dashboard`}>Dashboard</a></nav>
+</header>
+<main>{@render children()}</main>
+<footer><div><strong>StreamBridge</strong><br />One conversation, wherever your community chats.</div><div class="footer-links"><a href={`${base}/privacy`}>Privacy Policy</a><a href={`${base}/terms`}>Terms of Service</a></div></footer>
