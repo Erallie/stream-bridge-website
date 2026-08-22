@@ -35,6 +35,11 @@
         identities: Identity[];
     };
 
+    type DiscordGuild = {
+        id: string;
+        name: string;
+    };
+
     const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
 
     const providers = ['discord', 'google', 'twitch', 'kick'];
@@ -51,6 +56,7 @@
     });
 
     let workspaces = $state<Workspace[]>([]);
+    let discordGuilds = $state<DiscordGuild[]>([]);
 
     function createBlankWorkspace(): Workspace {
         return {
@@ -116,8 +122,14 @@
             me = await request('/dashboard/api/me');
 
             if (me.authenticated) {
-                const data = await request('/dashboard/api/workspaces');
+                const [data, guildData] = await Promise.all([
+                    request('/dashboard/api/workspaces'),
+                    findIdentity('discord')
+                        ? request('/dashboard/api/discord/guilds')
+                        : Promise.resolve({ guilds: [] })
+                ]);
                 workspaces = data.workspaces;
+                discordGuilds = guildData.guilds;
             }
         } catch (caughtError) {
             error =
@@ -294,7 +306,9 @@
                     <h2>Linked accounts</h2>
 
                     <p class="muted">
-                        Any linked account can sign you in.
+                        Authorize each platform once. Linked accounts can
+                        sign you in and can be assigned to any bridge you
+                        manage.
                     </p>
                 </div>
 
@@ -354,8 +368,8 @@
                     <h2>Your bridges</h2>
 
                     <p class="muted">
-                        Leaving Discord server ID blank creates a
-                        standalone bridge.
+                        Choose a Discord server you administer, or
+                        create a standalone bridge without Discord.
                     </p>
                 </div>
 
@@ -418,14 +432,29 @@
                         </label>
 
                         <label>
-                            Discord server ID
+                            Discord server
 
                             <span class="muted">Optional</span>
 
-                            <input
+                            <select
                                 bind:value={item.discord_guild_id}
-                                placeholder="Leave blank for standalone"
-                            />
+                            >
+                                <option value="">
+                                    None — standalone bridge
+                                </option>
+
+                                {#each discordGuilds as guild}
+                                    <option value={guild.id}>
+                                        {guild.name}
+                                    </option>
+                                {/each}
+                            </select>
+
+                            {#if !findIdentity('discord')}
+                                <span class="muted">
+                                    Link Discord above to select a server.
+                                </span>
+                            {/if}
                         </label>
 
                         <label class="full">

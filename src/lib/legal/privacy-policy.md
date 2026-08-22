@@ -113,7 +113,7 @@ Messages routed through Social Stream Ninja may be processed by Social Stream Ni
 
 When an administrator authorizes YouTube, StreamBridge stores:
 
-- Discord server ID associated with the authorization
+- Dashboard account associated with the authorization
 - Authorized YouTube channel ID
 - YouTube channel title
 - An encrypted OAuth refresh token
@@ -144,7 +144,7 @@ Use of YouTube features is also subject to the [Google Privacy Policy](https://p
 
 When an administrator authorizes Kick, StreamBridge stores:
 
-- Discord server ID associated with the authorization
+- Dashboard account associated with the authorization
 - Kick broadcaster user ID
 - Kick broadcaster username
 - An encrypted OAuth refresh token
@@ -162,7 +162,7 @@ They are used to:
 - Identify the authorized broadcaster
 - Subscribe to that broadcaster’s chat-message events
 - Receive public chat messages
-- Post relayed messages using the StreamBridge Kick bot
+- Post relayed messages using the linked Kick account
 
 Although Kick may make additional user information available under an authorized scope, StreamBridge’s current implementation extracts and stores only the broadcaster ID, username, and authorization token needed for these functions. It does not intentionally store the broadcaster’s email address.
 
@@ -170,7 +170,7 @@ StreamBridge never receives or stores the user’s Kick password. Authentication
 
 ### 3.7 Twitch information
 
-StreamBridge uses a centrally configured Twitch bot account to join channels selected by server administrators.
+When a user links Twitch through the dashboard, StreamBridge stores the Twitch account ID, display name, profile image URL, and encrypted renewable OAuth authorization. A linked Twitch account may be assigned to one or more bridges owned by the same dashboard account.
 
 For Twitch chat, StreamBridge may process:
 
@@ -189,16 +189,16 @@ A short-lived in-memory cache may retain Twitch user IDs or login names and prof
 - The cache is held in memory and is lost when StreamBridge restarts.
 - The cache is periodically pruned and bounded in size.
 
-Individual Discord servers do not receive or control the central Twitch bot account’s OAuth credentials.
+StreamBridge uses the linked Twitch identity to read and post chat for an enabled bridge. Other dashboard accounts and Discord servers do not receive that account's OAuth credentials.
 
 ### 3.8 OAuth state and temporary authorization data
 
-YouTube and Kick authorization links use random state values to associate an OAuth response with the correct Discord server.
+Discord, Google/YouTube, Twitch, and Kick dashboard authorization links use random state values to associate an OAuth response with the correct dashboard session.
 
 Pending authorization data:
 
-- Is stored temporarily in memory
-- Is associated with a Discord server ID
+- Is stored temporarily in the StreamBridge database
+- Is associated with a dashboard session when linking another identity
 - Expires after approximately ten minutes
 - Is removed after use or expiration
 - Does not include a user’s platform password
@@ -328,7 +328,7 @@ If StreamBridge or its operation is transferred to another owner, information ne
 StreamBridge generally retains information as follows:
 
 - **Server configuration:** Until changed, cleared, or deleted at an administrator’s request
-- **YouTube and Kick authorization records:** Until the connection is disabled, the authorization becomes unusable, or deletion is requested
+- **Linked platform authorization records:** Until the identity is unlinked, the authorization becomes unusable, or deletion is requested
 - **Duplicate and delivery history:** Approximately 30 days
 - **Pending OAuth state:** Approximately ten minutes
 - **Reflection tracking:** Approximately two minutes in memory
@@ -344,13 +344,13 @@ Backups, if maintained, may retain deleted records temporarily until they are ov
 
 StreamBridge uses reasonable technical measures designed to protect information, including:
 
-- Encryption of stored per-server YouTube and Kick refresh tokens using Fernet symmetric encryption
+- Encryption of stored Google/YouTube, Twitch, and Kick access and refresh tokens using Fernet symmetric encryption
 - HTTPS for OAuth callbacks
 - TLS-protected connections to supported platform APIs
 - Signed-webhook verification for Kick events
 - PKCE for Kick OAuth authorization
 - Random, expiring OAuth state values
-- Private Discord responses for OAuth authorization links
+- Server-side OAuth callbacks; platform secrets are never embedded in the static website
 - Restricted server-side storage for credentials and tokens
 - Avoidance of secrets in normal application logs
 
@@ -365,10 +365,10 @@ Discord server administrators can limit StreamBridge’s access by:
 - Removing every forwarding channel with `/forward clear`
 - Disabling Discord receiving with `/receive clear`
 - Disconnecting Social Stream Ninja with `/ssn disconnect`
-- Disabling a direct connection with `/direct disable`
+- Disabling a direct connection in the dashboard
 - Removing StreamBridge from the Discord server
 
-Disabling YouTube or Kick removes the locally stored authorization record for that Discord server. It does not necessarily revoke the grant at the platform itself.
+Disabling a platform for one bridge does not unlink the identity or revoke the platform grant. Users can revoke the grant through the platform and may request deletion of the stored linked identity.
 
 ### Revoke Google or YouTube access
 
