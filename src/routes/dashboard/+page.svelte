@@ -29,6 +29,7 @@
         enabled: boolean;
         connections: Connection[];
         discord_channel_id: string | null;
+        discord_enabled: boolean;
         discord_forward_enabled: boolean;
         discord_receive_enabled: boolean;
         runtime_status: {
@@ -56,7 +57,7 @@
     const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
 
     const providers = ['discord', 'google', 'twitch', 'kick'];
-    const directPlatforms = ['youtube', 'twitch', 'kick'];
+    const directPlatforms = ['twitch', 'kick', 'youtube'];
 
     let loading = $state(true);
     let error = $state('');
@@ -85,6 +86,7 @@
             enabled: true,
             connections: [],
             discord_channel_id: null,
+            discord_enabled: false,
             discord_forward_enabled: true,
             discord_receive_enabled: true,
             runtime_status: {
@@ -104,6 +106,12 @@
 
     function identityProvider(platform: string): string {
         return platform === 'youtube' ? 'google' : platform;
+    }
+
+    function platformName(platform: string): string {
+        return platform === 'youtube'
+            ? 'YouTube'
+            : platform[0].toUpperCase() + platform.slice(1);
     }
 
     function findIdentity(provider: string): Identity | undefined {
@@ -377,12 +385,6 @@
         </div>
     {/if}
 
-    {#if saved}
-        <div class="notice">
-            {saved}
-        </div>
-    {/if}
-
     {#if loading && !error}
         <div class="panel">
             Loading your bridge…
@@ -551,95 +553,6 @@
                             />
                         </label>
 
-                        <label>
-                            Discord server
-
-                            <span class="muted">Optional</span>
-
-                            <select
-                                value={item.discord_guild_id || ''}
-                                onchange={(event) => {
-                                    item.discord_guild_id =
-                                        event.currentTarget.value || null;
-                                    item.discord_channel_id = null;
-                                    if (item.discord_guild_id) {
-                                        loadDiscordChannels(
-                                            item.discord_guild_id
-                                        );
-                                    }
-                                }}
-                            >
-                                <option value="">
-                                    None — standalone bridge
-                                </option>
-
-                                {#each discordGuilds as guild}
-                                    <option value={guild.id}>
-                                        {guild.name}
-                                    </option>
-                                {/each}
-                            </select>
-
-                            {#if !findIdentity('discord')}
-                                <span class="muted">
-                                    Link Discord above to select a server.
-                                </span>
-                            {/if}
-                        </label>
-
-                        {#if item.discord_guild_id}
-                            <label class="full">
-                                Discord relay channel
-
-                                <select
-                                    bind:value={item.discord_channel_id}
-                                    required={
-                                        item.discord_forward_enabled ||
-                                        item.discord_receive_enabled
-                                    }
-                                >
-                                    <option value="">
-                                        Select a channel
-                                    </option>
-
-                                    {#each discordChannels(item) as channel}
-                                        <option value={channel.id}>
-                                            #{channel.name} ({channel.type})
-                                        </option>
-                                    {/each}
-                                </select>
-
-                                <span class="muted">
-                                    The same text channel or voice-channel
-                                    side chat is used in both directions.
-                                </span>
-                            </label>
-
-                            <div class="checks full">
-                                <label class="check">
-                                    <input
-                                        type="checkbox"
-                                        bind:checked={
-                                            item.discord_forward_enabled
-                                        }
-                                    />
-
-                                    Forward messages from Discord
-                                </label>
-
-                                <label class="check">
-                                    <input
-                                        type="checkbox"
-                                        bind:checked={
-                                            item.discord_receive_enabled
-                                        }
-                                    />
-
-                                    Forward messages to Discord
-                                </label>
-                            </div>
-                        {/if}
-
                         <label class="full">
                             Social Stream Ninja session ID
 
@@ -739,15 +652,111 @@
                                             }}
                                         />
 
-                                        {platform}
+                                        {platformName(platform)}
 
                                         {#if !identity}
                                             (link first)
                                         {/if}
                                     </label>
                                 {/each}
+
+                                <label class="check">
+                                    <input
+                                        type="checkbox"
+                                        disabled={!findIdentity('discord')}
+                                        bind:checked={item.discord_enabled}
+                                    />
+
+                                    Discord
+
+                                    {#if !findIdentity('discord')}
+                                        (link first)
+                                    {/if}
+                                </label>
                             </div>
                         </div>
+
+                        {#if item.discord_enabled}
+                            <label>
+                                Discord server
+
+                                <select
+                                    required
+                                    value={item.discord_guild_id || ''}
+                                    onchange={(event) => {
+                                        item.discord_guild_id =
+                                            event.currentTarget.value || null;
+                                        item.discord_channel_id = null;
+                                        if (item.discord_guild_id) {
+                                            loadDiscordChannels(
+                                                item.discord_guild_id
+                                            );
+                                        }
+                                    }}
+                                >
+                                    <option value="">
+                                        Select a Discord server
+                                    </option>
+
+                                    {#each discordGuilds as guild}
+                                        <option value={guild.id}>
+                                            {guild.name}
+                                        </option>
+                                    {/each}
+                                </select>
+                            </label>
+
+                            {#if item.discord_guild_id}
+                                <label>
+                                    Discord relay channel
+
+                                    <select
+                                        bind:value={item.discord_channel_id}
+                                        required
+                                    >
+                                        <option value="">
+                                            Select a channel
+                                        </option>
+
+                                        {#each discordChannels(item) as channel}
+                                            <option value={channel.id}>
+                                                #{channel.name} ({channel.type})
+                                            </option>
+                                        {/each}
+                                    </select>
+
+                                    <span class="muted">
+                                        The same text channel or
+                                        voice-channel side chat is used in
+                                        both directions.
+                                    </span>
+                                </label>
+
+                                <div class="checks full">
+                                    <label class="check">
+                                        <input
+                                            type="checkbox"
+                                            bind:checked={
+                                                item.discord_forward_enabled
+                                            }
+                                        />
+
+                                        Forward messages from Discord
+                                    </label>
+
+                                    <label class="check">
+                                        <input
+                                            type="checkbox"
+                                            bind:checked={
+                                                item.discord_receive_enabled
+                                            }
+                                        />
+
+                                        Forward messages to Discord
+                                    </label>
+                                </div>
+                            {/if}
+                        {/if}
 
                         <label class="check full">
                             <input
@@ -784,6 +793,12 @@
                     {#if saveTarget === item && saveError}
                         <div class="notice error">
                             {saveError}
+                        </div>
+                    {/if}
+
+                    {#if saveTarget === item && saved}
+                        <div class="notice">
+                            {saved}
                         </div>
                     {/if}
                 </form>
