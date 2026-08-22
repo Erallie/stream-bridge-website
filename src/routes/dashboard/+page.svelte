@@ -28,6 +28,12 @@
         transport_announcements: boolean;
         enabled: boolean;
         connections: Connection[];
+        discord_forward_channel_ids: string[];
+        discord_receive_channel_id: string | null;
+        runtime_status: {
+            ssn: string;
+            direct_platforms: string[];
+        };
     };
 
     type AccountState = {
@@ -40,11 +46,16 @@
         name: string;
     };
 
+    type DiscordChannel = {
+        id: string;
+        name: string;
+        type: 'text' | 'voice';
+    };
+
     const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
 
     const providers = ['discord', 'google', 'twitch', 'kick'];
-    const ssnPlatforms = ['discord', 'twitch', 'youtube', 'kick'];
-    const directPlatforms = ['discord', 'youtube', 'twitch', 'kick'];
+    const directPlatforms = ['youtube', 'twitch', 'kick'];
 
     let loading = $state(true);
     let error = $state('');
@@ -57,6 +68,8 @@
 
     let workspaces = $state<Workspace[]>([]);
     let discordGuilds = $state<DiscordGuild[]>([]);
+    let channelsByGuild = $state<Record<string, DiscordChannel[]>>({});
+    const dirtyWorkspaces = new WeakSet<Workspace>();
 
     function createBlankWorkspace(): Workspace {
         return {
@@ -68,7 +81,13 @@
             relay_template: '{name} ({platform}) said: {message}',
             transport_announcements: true,
             enabled: true,
-            connections: []
+            connections: [],
+            discord_forward_channel_ids: [],
+            discord_receive_channel_id: null,
+            runtime_status: {
+                ssn: 'disconnected',
+                direct_platforms: []
+            }
         };
     }
 
@@ -130,6 +149,7 @@
                 ]);
                 workspaces = data.workspaces;
                 discordGuilds = guildData.guilds;
+                await loadWorkspaceChannels(workspaces);
             }
         } catch (caughtError) {
             error =
@@ -138,6 +158,81 @@
                     : 'Could not reach StreamBridge';
         } finally {
             loading = false;
+        }
+    }
+
+    async function loadWorkspaceChannels(items: Workspace[]): Promise<void> {
+        const guildIds = [
+            ...new Set(
+                items
+                    .map((item) => item.discord_guild_id)
+                    .filter((value): value is string => Boolean(value))
+            )
+        ];
+        await Promise.all(guildIds.map(loadDiscordChannels));
+    }
+
+    async function loadDiscordChannels(guildId: string): Promise<void> {
+        if (!guildId || channelsByGuild[guildId]) {
+            return;
+        }
+        const data = await request(
+            `/dashboard/api/discord/guilds/${guildId}/channels`
+        );
+        channelsByGuild = {
+            ...channelsByGuild,
+            [guildId]: data.channels
+        };
+    }
+
+    function discordChannels(item: Workspace): DiscordChannel[] {
+        return item.discord_guild_id
+            ? channelsByGuild[item.discord_guild_id] || []
+            : [];
+    }
+
+    function setSsnTargets(item: Workspace, value: string): void {
+        item.ssn_targets = [
+            ...new Set(
+                value
+                    .split(',')
+                    .map((target) => target.trim().toLowerCase())
+                    .filter(Boolean)
+            )
+        ];
+    }
+
+    function mergeSavedWorkspaces(fresh: Workspace[]): void {
+        const freshIds = new Set(fresh.map((item) => item.id));
+        workspaces = [
+            ...fresh.map((savedItem) => {
+                const localItem = workspaces.find(
+                    (item) => item.id === savedItem.id
+                );
+                return localItem && dirtyWorkspaces.has(localItem)
+                    ? localItem
+                    : savedItem;
+            }),
+            ...workspaces.filter(
+                (item) => !item.id || !freshIds.has(item.id)
+            )
+        ];
+    }
+
+    async function refreshSavedConfiguration(): Promise<void> {
+        if (
+            document.visibilityState !== 'visible' ||
+            document.activeElement?.closest('form')
+        ) {
+            return;
+        }
+        try {
+            const data = await request('/dashboard/api/workspaces');
+            const fresh = data.workspaces as Workspace[];
+            mergeSavedWorkspaces(fresh);
+            await loadWorkspaceChannels(workspaces);
+        } catch {
+            // The normal page notices handle errors from user-initiated actions.
         }
     }
 
@@ -185,9 +280,12 @@
                 )
             );
 
+            dirtyWorkspaces.delete(item);
             saved = `${item.name} saved`;
 
-            await load();
+            const data = await request('/dashboard/api/workspaces');
+            mergeSavedWorkspaces(data.workspaces);
+            await loadWorkspaceChannels(workspaces);
         } catch (caughtError) {
             error =
                 caughtError instanceof Error
@@ -233,19 +331,6 @@
         ];
     }
 
-    function toggleTarget(
-        item: Workspace,
-        platform: string
-    ): void {
-        if (item.ssn_targets.includes(platform)) {
-            item.ssn_targets = item.ssn_targets.filter(
-                (target) => target !== platform
-            );
-        } else {
-            item.ssn_targets = [...item.ssn_targets, platform];
-        }
-    }
-
     async function logout(): Promise<void> {
         await request('/dashboard/api/logout', {
             method: 'POST'
@@ -259,7 +344,14 @@
         workspaces = [];
     }
 
-    onMount(load);
+    onMount(() => {
+        load();
+        const refreshTimer = window.setInterval(
+            refreshSavedConfiguration,
+            5000
+        );
+        return () => window.clearInterval(refreshTimer);
+    });
 </script>
 
 <svelte:head>
@@ -415,15 +507,24 @@
             {#each workspaces as item}
                 <form
                     class="panel workspace"
+                    oninput={() => dirtyWorkspaces.add(item)}
+                    onchange={() => dirtyWorkspaces.add(item)}
                     onsubmit={(event) => {
                         event.preventDefault();
                         save(item);
                     }}
                 >
                     <div class="workspace-header">
-                        <h2>
-                            {item.name || 'Untitled bridge'}
-                        </h2>
+                        <div>
+                            <h2>
+                                {item.name || 'Untitled bridge'}
+                            </h2>
+
+                            <div class="muted">
+                                SSN: {item.runtime_status.ssn} · Direct:
+                                {item.runtime_status.direct_platforms.join(', ') || 'none'}
+                            </div>
+                        </div>
 
                         <label class="check">
                             <input
@@ -452,7 +553,18 @@
                             <span class="muted">Optional</span>
 
                             <select
-                                bind:value={item.discord_guild_id}
+                                value={item.discord_guild_id || ''}
+                                onchange={(event) => {
+                                    item.discord_guild_id =
+                                        event.currentTarget.value || null;
+                                    item.discord_forward_channel_ids = [];
+                                    item.discord_receive_channel_id = null;
+                                    if (item.discord_guild_id) {
+                                        loadDiscordChannels(
+                                            item.discord_guild_id
+                                        );
+                                    }
+                                }}
                             >
                                 <option value="">
                                     None — standalone bridge
@@ -472,6 +584,53 @@
                             {/if}
                         </label>
 
+                        {#if item.discord_guild_id}
+                            <label>
+                                Discord channels forwarded
+
+                                <span class="muted">
+                                    Select any number of text channels or
+                                    voice-channel side chats.
+                                </span>
+
+                                <select
+                                    multiple
+                                    size="6"
+                                    bind:value={
+                                        item.discord_forward_channel_ids
+                                    }
+                                >
+                                    {#each discordChannels(item) as channel}
+                                        <option value={channel.id}>
+                                            #{channel.name} ({channel.type})
+                                        </option>
+                                    {/each}
+                                </select>
+                            </label>
+
+                            <label>
+                                Discord receiving channel
+
+                                <span class="muted">Optional</span>
+
+                                <select
+                                    bind:value={
+                                        item.discord_receive_channel_id
+                                    }
+                                >
+                                    <option value="">
+                                        Do not send platform chat to Discord
+                                    </option>
+
+                                    {#each discordChannels(item) as channel}
+                                        <option value={channel.id}>
+                                            #{channel.name} ({channel.type})
+                                        </option>
+                                    {/each}
+                                </select>
+                            </label>
+                        {/if}
+
                         <label class="full">
                             Social Stream Ninja session ID
 
@@ -483,6 +642,10 @@
                                 autocomplete="off"
                                 spellcheck="false"
                             />
+
+                            <span class="muted">
+                                Leave blank and save to disconnect SSN.
+                            </span>
                         </label>
 
                         <label class="full">
@@ -500,29 +663,26 @@
                             </span>
                         </label>
 
-                        <div class="full">
-                            <strong>SSN platforms</strong>
+                        <label class="full">
+                            SSN platforms
 
-                            <div class="checks">
-                                {#each ssnPlatforms as platform}
-                                    <label class="check">
-                                        <input
-                                            type="checkbox"
-                                            checked={item.ssn_targets.includes(
-                                                platform
-                                            )}
-                                            onchange={() =>
-                                                toggleTarget(
-                                                    item,
-                                                    platform
-                                                )}
-                                        />
+                            <input
+                                value={item.ssn_targets.join(', ')}
+                                oninput={(event) =>
+                                    setSsnTargets(
+                                        item,
+                                        event.currentTarget.value
+                                    )}
+                                placeholder="twitch, youtube, kick, tiktok, ..."
+                                spellcheck="false"
+                            />
 
-                                        {platform}
-                                    </label>
-                                {/each}
-                            </div>
-                        </div>
+                            <span class="muted">
+                                Enter any SSN platform identifiers,
+                                separated by commas. This is not limited
+                                to StreamBridge's direct platforms.
+                            </span>
+                        </label>
 
                         <div class="full">
                             <strong>
