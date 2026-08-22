@@ -1,6 +1,7 @@
 <script lang="ts">
     import { base } from '$app/paths';
     import { onMount } from 'svelte';
+    import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
 
     type Identity = {
         provider: string;
@@ -34,10 +35,7 @@
         identities: Identity[];
     };
 
-    const api = (
-        import.meta.env.PUBLIC_STREAMBRIDGE_API_URL ||
-        'http://localhost:8766'
-    ).replace(/\/$/, '');
+    const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
 
     const providers = ['discord', 'google', 'twitch', 'kick'];
     const ssnPlatforms = ['discord', 'twitch', 'youtube', 'kick'];
