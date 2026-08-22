@@ -257,20 +257,24 @@
             });
 
             await Promise.all(
-                item.connections.map((connection) =>
-                    request(
-                        `/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`,
-                        {
-                            method: 'PUT',
-                            body: JSON.stringify({
-                                provider_user_id:
-                                    connection.provider_user_id,
-                                enabled: connection.enabled,
-                                settings: connection.settings
-                            })
-                        }
+                item.connections
+                    .filter((connection) =>
+                        directPlatforms.includes(connection.provider)
                     )
-                )
+                    .map((connection) =>
+                        request(
+                            `/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`,
+                            {
+                                method: 'PUT',
+                                body: JSON.stringify({
+                                    provider_user_id:
+                                        connection.provider_user_id,
+                                    enabled: connection.enabled,
+                                    settings: connection.settings
+                                })
+                            }
+                        )
+                    )
             );
 
             saved = `${item.name} saved`;
