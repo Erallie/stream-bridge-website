@@ -499,6 +499,11 @@
                     onchange={() => dirtyWorkspaces.add(item)}
                     onsubmit={(event) => {
                         event.preventDefault();
+                        const targetsInput = event.currentTarget.elements
+                            .namedItem('ssn_targets');
+                        if (targetsInput instanceof HTMLInputElement) {
+                            setSsnTargets(item, targetsInput.value);
+                        }
                         save(item);
                     }}
                 >
@@ -660,8 +665,9 @@
                             SSN platforms
 
                             <input
+                                name="ssn_targets"
                                 value={item.ssn_targets.join(', ')}
-                                oninput={(event) =>
+                                onblur={(event) =>
                                     setSsnTargets(
                                         item,
                                         event.currentTarget.value
