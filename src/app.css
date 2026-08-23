@@ -340,6 +340,15 @@ footer {
 	color: var(--muted);
 }
 
+.muted a {
+	color: #7ca0ff;
+	text-decoration: underline;
+}
+
+.muted a:hover {
+	color: #a8beff;
+}
+
 .panel {
 	padding: 24px;
 	background: var(--panel);

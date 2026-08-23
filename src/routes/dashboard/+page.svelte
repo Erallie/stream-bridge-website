@@ -569,7 +569,14 @@
 
 									<span class="muted">
 										Enter any SSN platform identifiers, separated by commas. This is not limited to
-										StreamBridge's direct platforms.
+										StreamBridge's direct platforms. See the
+                                        <a
+                                            href="https://socialstream.ninja/docs/supported-sites.html"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            supported SSN platforms
+                                        </a>.
 									</span>
 								</label>
 							</div>
