@@ -56,6 +56,13 @@
 
 	const providers = ['discord', 'google', 'twitch', 'kick'];
 	const directPlatforms = ['twitch', 'kick', 'youtube'];
+	const discordInviteUrl = 'https://discord.com/oauth2/authorize?client_id=1538972596165419069';
+	const providerLogos: Record<string, string> = {
+		discord: 'https://cdn.simpleicons.org/discord/5865F2',
+		google: 'https://cdn.simpleicons.org/google',
+		twitch: 'https://cdn.simpleicons.org/twitch/9146FF',
+		kick: 'https://cdn.simpleicons.org/kick/53FC18'
+	};
 
 	let loading = $state(true);
 	let error = $state('');
@@ -65,6 +72,7 @@
 	let accountMessage = $state('');
 	let accountError = $state('');
 	let disconnectingProvider = $state('');
+	let showSsnSessionId = $state(false);
 
 	let me = $state<AccountState>({
 		authenticated: false,
@@ -81,6 +89,10 @@
 		}
 
 		return provider[0].toUpperCase() + provider.slice(1);
+	}
+
+	function providerLogo(provider: string): string {
+		return providerLogos[provider] || '';
 	}
 
 	function identityProvider(platform: string): string {
@@ -390,7 +402,12 @@
 						{#if identity?.avatar_url}
 							<img class="avatar" src={identity.avatar_url} alt="" />
 						{:else}
-							<div class="avatar"></div>
+							<img
+								class="avatar provider-logo"
+								src={providerLogo(provider)}
+								alt=""
+								aria-hidden="true"
+							/>
 						{/if}
 
 						<div>
@@ -416,6 +433,17 @@
 								>
 									{disconnectingProvider === provider ? 'Disconnecting…' : 'Disconnect'}
 								</button>
+							{/if}
+
+							{#if provider === 'discord'}
+								<a
+									class="button secondary small"
+									href={discordInviteUrl}
+									target="_blank"
+									rel="noreferrer"
+								>
+									Invite bot
+								</a>
 							{/if}
 						</div>
 					</div>
@@ -483,20 +511,43 @@
 							</div>
 
 							<div class="form-grid">
-								<label class="full">
-									Social Stream Ninja session ID
+								<div class="full field">
+									<div>
+										Social Stream Ninja session ID
 
-									<span class="muted">Optional</span>
+										<span class="muted">Optional</span>
+									</div>
 
-									<input
-										type="password"
-										bind:value={item.ssn_session_id}
-										autocomplete="off"
-										spellcheck="false"
-									/>
+									<div class="input-with-action">
+										<input
+											type={showSsnSessionId ? 'text' : 'password'}
+											bind:value={item.ssn_session_id}
+											autocomplete="off"
+											spellcheck="false"
+										/>
+
+										<button
+											class="icon-button"
+											type="button"
+											aria-label={showSsnSessionId ? 'Hide session ID' : 'Show session ID'}
+											title={showSsnSessionId ? 'Hide session ID' : 'Show session ID'}
+											onclick={() => (showSsnSessionId = !showSsnSessionId)}
+										>
+											{#if showSsnSessionId}
+												<svg viewBox="0 0 24 24" aria-hidden="true">
+													<path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9.5 5.1 9.5 5.1a13.2 13.2 0 0 1-3 3.5M6.6 6.7A15.8 15.8 0 0 0 2.5 12s4 5 9.5 5a10 10 0 0 0 3.3-.6" />
+												</svg>
+											{:else}
+												<svg viewBox="0 0 24 24" aria-hidden="true">
+													<path d="M2.5 12S6.5 7 12 7s9.5 5 9.5 5-4 5-9.5 5-9.5-5-9.5-5Z" />
+													<circle cx="12" cy="12" r="2.5" />
+												</svg>
+											{/if}
+										</button>
+									</div>
 
 									<span class="muted"> Leave blank and save to disconnect SSN. </span>
-								</label>
+								</div>
 
 								<label class="full">
 									SSN platforms

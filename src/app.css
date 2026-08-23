@@ -434,6 +434,54 @@ label {
 	font-weight: 600;
 }
 
+.field {
+	display: grid;
+	gap: 7px;
+	color: #cfd0d6;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.input-with-action {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 8px;
+}
+
+.icon-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 43px;
+	height: 43px;
+	padding: 0;
+	color: #d9dbe3;
+	cursor: pointer;
+	background: #191b22;
+	border: 1px solid #30333c;
+	border-radius: 9px;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+	color: white;
+	border-color: #607bce;
+}
+
+.icon-button:focus-visible {
+	outline: 3px solid #3975ff1f;
+}
+
+.icon-button svg {
+	width: 21px;
+	height: 21px;
+	fill: none;
+	stroke: currentcolor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
 input,
 select,
 textarea {
@@ -485,7 +533,15 @@ textarea:focus {
 	border-radius: 50%;
 }
 
+.provider-logo {
+	padding: 9px;
+	object-fit: contain;
+}
+
 .account-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	margin-left: auto;
 }
 
