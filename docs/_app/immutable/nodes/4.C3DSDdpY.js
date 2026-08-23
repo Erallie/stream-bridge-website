@@ -470,4 +470,4 @@ For privacy questions, requests, or complaints:\r
 \r
 **Operator:** Gozar Productions LLC</br>\r
 **Email:** contact@gozarproductions.com\r
-`,f=l(`<meta name="description" content="StreamBridge privacy policy"/> <link rel="canonical" href="https://streambridge.gozarproductions.com/privacy/"/>`,1),p=l(`<article class="page legal"></article>`);function m(l,m){a(m,!0);let h=u(d);var g=p();s(`7ke6fz`,e=>{var a=f();n(2),t(()=>{r.title=`Privacy Policy — StreamBridge`}),i(e,a)}),c(g,()=>h,!0),e(g),i(l,g),o()}export{m as component};
+`,f=l(`<meta name="description" content="StreamBridge privacy policy"/> <link rel="canonical" href="https://streambridge.gozarproductions.com/privacy"/>`,1),p=l(`<article class="page legal"></article>`);function m(l,m){a(m,!0);let h=u(d);var g=p();s(`7ke6fz`,e=>{var a=f();n(2),t(()=>{r.title=`Privacy Policy — StreamBridge`}),i(e,a)}),c(g,()=>h,!0),e(g),i(l,g),o()}export{m as component};

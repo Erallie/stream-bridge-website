@@ -352,4 +352,4 @@ Questions about these Terms may be sent to:\r
 \r
 **Operator:** Gozar Productions LLC</br>\r
 **Email:** contact@gozarproductions.com\r
-`,f=l(`<meta name="description" content="StreamBridge terms of service"/> <link rel="canonical" href="https://streambridge.gozarproductions.com/terms/"/>`,1),p=l(`<article class="page legal"></article>`);function m(l,m){a(m,!0);let h=u(d);var g=p();s(`1e0rsuc`,e=>{var a=f();n(2),t(()=>{r.title=`Terms of Service — StreamBridge`}),i(e,a)}),c(g,()=>h,!0),e(g),i(l,g),o()}export{m as component};
+`,f=l(`<meta name="description" content="StreamBridge terms of service"/> <link rel="canonical" href="https://streambridge.gozarproductions.com/terms"/>`,1),p=l(`<article class="page legal"></article>`);function m(l,m){a(m,!0);let h=u(d);var g=p();s(`1e0rsuc`,e=>{var a=f();n(2),t(()=>{r.title=`Terms of Service — StreamBridge`}),i(e,a)}),c(g,()=>h,!0),e(g),i(l,g),o()}export{m as component};
