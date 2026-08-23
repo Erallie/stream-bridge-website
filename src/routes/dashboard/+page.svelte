@@ -657,7 +657,7 @@
 									<textarea rows="2" bind:value={item.relay_template} required></textarea>
 
 									<span class="muted">
-										Must include {'{name}'},
+										Available placeholders include {'{name}'},
 										{'{platform}'}, and {'{message}'}.
 									</span>
 								</label>
