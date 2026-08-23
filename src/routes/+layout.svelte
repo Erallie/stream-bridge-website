@@ -1,6 +1,6 @@
 <script lang="ts">
 	import logo from '$lib/assets/logo.svg';
-    import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.svg';
 	import { resolve } from '$app/paths';
 	import '../app.css';
 
@@ -18,6 +18,7 @@
 	</a>
 	<nav aria-label="Main navigation">
 		<a href={resolve('/#features')}>Features</a>
+		<a href={resolve('/support')}>Support</a>
 		<a href={resolve('/privacy')}>Privacy</a>
 		<a href={resolve('/terms')}>Terms</a>
 		<a class="button small" href={resolve('/dashboard')}>Dashboard</a>
@@ -36,6 +37,7 @@
 	</div>
 
 	<div class="footer-links">
+		<a href={resolve('/support')}>Support</a>
 		<a href={resolve('/privacy')}>Privacy Policy</a>
 		<a href={resolve('/terms')}>Terms of Service</a>
 	</div>

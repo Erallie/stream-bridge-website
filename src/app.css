@@ -347,6 +347,66 @@ footer {
 	border-radius: 16px;
 }
 
+.support-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	max-width: 920px;
+}
+
+.support-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-height: 280px;
+	padding: 32px;
+	overflow: hidden;
+	background: linear-gradient(145deg, #15171e, #0f1015);
+	border: 1px solid #292b34;
+	border-radius: 18px;
+	transition:
+		transform 160ms ease,
+		border-color 160ms ease,
+		box-shadow 160ms ease;
+}
+
+.support-card::after {
+	position: absolute;
+	right: -80px;
+	bottom: -110px;
+	width: 230px;
+	height: 230px;
+	content: '';
+	background: radial-gradient(circle, rgb(255 64 55 / 18%), transparent 68%);
+	pointer-events: none;
+}
+
+.support-card:hover {
+	color: inherit;
+	border-color: #694044;
+	box-shadow: 0 18px 48px rgb(0 0 0 / 28%);
+	transform: translateY(-3px);
+}
+
+.support-card h2 {
+	margin: 18px 0 10px;
+	font-size: 27px;
+	letter-spacing: -0.03em;
+}
+
+.support-card p {
+	margin: 0;
+	color: var(--muted);
+	line-height: 1.6;
+}
+
+.support-card .support-action {
+	margin-top: auto;
+	padding-top: 32px;
+	color: #fff;
+	font-weight: 700;
+}
+
 /* Notices and errors */
 
 .notice {
@@ -514,7 +574,8 @@ textarea:focus {
 	}
 
 	.feature-grid,
-	.card-grid {
+	.card-grid,
+	.support-grid {
 		grid-template-columns: 1fr;
 	}
 
