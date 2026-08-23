@@ -402,12 +402,14 @@
 						{#if identity?.avatar_url}
 							<img class="avatar" src={identity.avatar_url} alt="" />
 						{:else}
-							<img
-								class="avatar provider-logo"
-								src={providerLogo(provider)}
-								alt=""
-								aria-hidden="true"
-							/>
+							<div class="avatar provider-logo-container">
+                                <img
+                                    class="provider-logo"
+                                    src={providerLogo(provider)}
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+                            </div>
 						{/if}
 
 						<div>
