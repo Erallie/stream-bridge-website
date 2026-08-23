@@ -536,7 +536,6 @@ textarea:focus {
 .provider-logo {
 	padding: 9px;
 	object-fit: contain;
-	border-radius: 0;
 }
 
 .account-actions {
