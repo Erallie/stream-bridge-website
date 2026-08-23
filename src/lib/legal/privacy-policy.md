@@ -1,6 +1,6 @@
 # StreamBridge Privacy Policy
 
-**Last updated:** August 22, 2026
+**Last updated:** August 23, 2026
 
 This Privacy Policy explains how StreamBridge (“StreamBridge,” “we,” “us,” or “the Bot”), operated by **Gozar Productions LLC**, accesses, processes, stores, shares, and deletes information when it is added to a Discord server or connected to Twitch, YouTube, Kick, or Social Stream Ninja.
 
@@ -53,7 +53,7 @@ Discord IDs are numeric identifiers assigned by Discord.
 
 ### 3.2 Discord message information
 
-StreamBridge processes Discord messages for relay only when they are sent in the shared channel selected with `/forward set` or through the dashboard and forwarding from Discord is enabled.
+StreamBridge processes Discord messages for relay only when they are sent in the shared channel selected with `/channel set` or through the dashboard and forwarding from Discord is enabled.
 
 For those messages, StreamBridge may process:
 
@@ -380,11 +380,10 @@ No system can guarantee absolute security. Users should immediately contact **co
 
 Discord server administrators can limit StreamBridge’s access by:
 
-- Selecting one shared relay channel with `/forward set`, `/receive set`, or the dashboard
-- Disabling forwarding from Discord with `/forward clear`
-- Disabling forwarding to Discord with `/receive clear`
+- Selecting one shared relay channel and its forwarding directions with `/channel set` or the dashboard
+- Disabling Discord integration with `/channel remove` while retaining the saved channel and direction settings
 - Disconnecting Social Stream Ninja with `/ssn disconnect`
-- Disabling a direct connection in the dashboard
+- Enabling or disabling a linked direct connection with `/direct enable`, `/direct disable`, or the dashboard
 - Removing StreamBridge from the Discord server
 
 Dashboard users can disconnect a linked identity with the **Disconnect** button. Disconnecting deletes StreamBridge’s stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. Disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. To avoid locking a user out, StreamBridge requires another sign-in identity to be linked before the final identity can be disconnected.

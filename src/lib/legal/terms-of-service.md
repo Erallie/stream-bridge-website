@@ -1,6 +1,6 @@
 # StreamBridge Terms of Service
 
-**Last updated:** August 22, 2026
+**Last updated:** August 23, 2026
 
 These Terms of Service (“Terms”) govern access to and use of StreamBridge (“StreamBridge,” “the Bot,” “we,” “us,” or “our”), operated by **Gozar Productions LLC**.
 
@@ -237,10 +237,9 @@ We may restrict, suspend, or terminate access to StreamBridge if we reasonably b
 
 A dashboard user or server administrator may stop using StreamBridge at any time by:
 
-- Disabling forwarding from Discord with `/forward clear`
-- Disabling forwarding to Discord with `/receive clear`
-- Disconnecting SSN
-- Disabling direct platform connections
+- Disabling Discord integration with `/channel remove`
+- Disconnecting Social Stream Ninja with `/ssn disconnect`
+- Disabling linked direct platform connections with `/direct disable` or through the dashboard
 - Disconnecting linked identities through the dashboard
 - Revoking third-party authorizations
 - Removing StreamBridge from the Discord server
