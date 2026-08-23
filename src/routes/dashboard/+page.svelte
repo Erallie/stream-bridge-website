@@ -630,10 +630,6 @@
 											</label>
 										{/each}
 
-										<p class="muted">
-											While YouTube is offline, StreamBridge checks for a new active livestream
-											approximately every five minutes. Detection may take up to five minutes.
-										</p>
 
 										<label class="check">
 											<input
@@ -649,6 +645,10 @@
 											{/if}
 										</label>
 									</div>
+
+									<p class="platform-footnote">
+										It may take up to five minutes for StreamBridge to detect a new YouTube livestream.
+									</p>
 								</div>
 
 								<label class="full">

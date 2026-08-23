@@ -610,6 +610,13 @@ textarea:focus {
 	gap: 10px;
 }
 
+.platform-footnote {
+	margin: 8px 0 0;
+	color: var(--muted);
+	font-size: 0.8rem;
+	line-height: 1.4;
+}
+
 .check {
 	display: flex;
 	align-items: center;
