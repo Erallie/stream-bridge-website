@@ -1,10 +1,10 @@
 import{J as e,L as t,N as n,Q as r,S as i,Y as a,h as o,v as s,w as c}from"../chunks/LHrFHH2h.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Terms of Service\r
 \r
-**Last updated:** August 18, 2026\r
+**Last updated:** August 22, 2026\r
 \r
-These Terms of Service (“Terms”) govern access to and use of StreamBridge (“StreamBridge,” “the Bot,” “we,” “us,” or “our”), operated by **Gozar Productions**.\r
+These Terms of Service (“Terms”) govern access to and use of StreamBridge (“StreamBridge,” “the Bot,” “we,” “us,” or “our”), operated by **Gozar Productions LLC**.\r
 \r
-By inviting StreamBridge to a Discord server, configuring it, authorizing a connected platform account, or using a channel where StreamBridge is active, you agree to these Terms and the [StreamBridge Privacy Policy](https://github.com/Erallie/stream-bridge/blob/main/legal/privacy-policy.md).\r
+By inviting StreamBridge to a Discord server, configuring a standalone or Discord-connected bridge, authorizing a connected platform account, or using a channel where StreamBridge is active, you agree to these Terms and the [StreamBridge Privacy Policy](https://streambridge.gozarproductions.com/privacy).\r
 \r
 If you do not agree, do not use StreamBridge.\r
 \r
@@ -12,9 +12,10 @@ If you do not agree, do not use StreamBridge.\r
 \r
 StreamBridge is a cross-platform chat-relay service. It may:\r
 \r
-- Forward messages from selected Discord channels to streaming platforms\r
-- Display Twitch, YouTube, Kick, and Social Stream Ninja messages in Discord\r
 - Relay messages between connected streaming platforms\r
+- Forward messages from the selected shared Discord relay channel to streaming platforms\r
+- Display Twitch, YouTube, Kick, and Social Stream Ninja messages in Discord\r
+- Operate as a standalone bridge without Discord\r
 - Connect directly to Twitch, YouTube, and Kick\r
 - Connect optionally to Social Stream Ninja\r
 - Support TikTok and other platforms through Social Stream Ninja\r
@@ -42,8 +43,8 @@ You may invite or configure StreamBridge only if you have permission to do so.\r
 \r
 By configuring a Discord server, you represent that you are authorized to:\r
 \r
-- Select the Discord channels StreamBridge reads\r
-- Select the Discord channel where relayed messages are posted\r
+- Select the shared Discord relay channel StreamBridge reads from and posts into\r
+- Independently enable or disable forwarding from and to that channel\r
 - Connect the server to streaming-platform accounts\r
 - Connect the server to a Social Stream Ninja session\r
 - Cause messages to be reposted between communities and platforms\r
@@ -53,7 +54,7 @@ Server administrators are responsible for informing members when their messages 
 \r
 ## 4. Platform-account authorization\r
 \r
-You may authorize a YouTube or Kick account only if you own it or have permission from its owner to manage its live chat.\r
+You may authorize a Discord, Google/YouTube, Twitch, or Kick account only if you own it or have permission from its owner to use it with StreamBridge and perform the configured relay functions.\r
 \r
 You must not:\r
 \r
@@ -108,7 +109,7 @@ StreamBridge is an independent service and is not endorsed by, sponsored by, or 
 \r
 StreamBridge is designed to copy messages between different communities and platforms.\r
 \r
-When you send a message in a configured Discord forwarding channel or connected streaming chat, the message may be reposted elsewhere with information such as:\r
+When you send a message in a configured shared Discord relay channel or connected streaming chat, the message may be reposted elsewhere with information such as:\r
 \r
 - Your display name\r
 - Your source platform\r
@@ -171,7 +172,7 @@ Discord server owners and platform-channel owners remain responsible for:\r
 - Bans, timeouts, and message deletion\r
 - Content filtering\r
 - Informing users that relay is enabled\r
-- Choosing which channels and platforms are connected\r
+- Choosing which Discord relay channel and streaming platforms are connected\r
 - Responding to abuse\r
 - Complying with applicable laws and platform policies\r
 \r
@@ -234,15 +235,17 @@ We may restrict, suspend, or terminate access to StreamBridge if we reasonably b
 - A platform requires the restriction\r
 - Continued operation may harm users, infrastructure, or third parties\r
 \r
-A server administrator may stop using StreamBridge at any time by:\r
+A dashboard user or server administrator may stop using StreamBridge at any time by:\r
 \r
-- Clearing forwarding and receiving channels\r
+- Disabling forwarding from Discord with \`/forward clear\`\r
+- Disabling forwarding to Discord with \`/receive clear\`\r
 - Disconnecting SSN\r
 - Disabling direct platform connections\r
+- Disconnecting linked identities through the dashboard\r
 - Revoking third-party authorizations\r
 - Removing StreamBridge from the Discord server\r
 \r
-Removing the Bot does not necessarily revoke permissions granted directly through Google, YouTube, or Kick. Those grants should also be revoked through the relevant account settings.\r
+Removing the Bot or disconnecting an identity from StreamBridge does not necessarily revoke permissions granted through Discord, Google/YouTube, Twitch, or Kick. Those grants should also be revoked through the relevant account settings.\r
 \r
 For deletion of stored server configuration, contact **contact@gozarproductions.com**.\r
 \r
@@ -266,7 +269,7 @@ If you submit feedback, suggestions, or feature ideas, you grant us permission t
 \r
 ## 16. Privacy\r
 \r
-StreamBridge’s information practices are described in the [StreamBridge Privacy Policy](https://github.com/Erallie/stream-bridge/blob/main/legal/privacy-policy.md).\r
+StreamBridge’s information practices are described in the [StreamBridge Privacy Policy](https://streambridge.gozarproductions.com/privacy).\r
 \r
 By using StreamBridge, you acknowledge that messages and account information will be processed as described there.\r
 \r
@@ -348,6 +351,6 @@ These Terms, together with the StreamBridge Privacy Policy and any applicable wr
 \r
 Questions about these Terms may be sent to:\r
 \r
-**Operator:** Gozar Productions LLC\r
+**Operator:** Gozar Productions LLC</br>\r
 **Email:** contact@gozarproductions.com\r
 `,d=c(`<meta name="description" content="StreamBridge terms of service"/>`),f=c(`<article class="page legal"></article>`);function p(c,p){a(p,!0);let m=l(u);var h=f();o(`1e0rsuc`,e=>{var r=d();n(()=>{t.title=`Terms of Service — StreamBridge`}),i(e,r)}),s(h,()=>m,!0),r(h),i(c,h),e()}export{p as component};

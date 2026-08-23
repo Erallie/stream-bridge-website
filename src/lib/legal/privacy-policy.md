@@ -1,6 +1,6 @@
 # StreamBridge Privacy Policy
 
-**Last updated:** August 18, 2026
+**Last updated:** August 22, 2026
 
 This Privacy Policy explains how StreamBridge (“StreamBridge,” “we,” “us,” or “the Bot”), operated by **Gozar Productions LLC**, accesses, processes, stores, shares, and deletes information when it is added to a Discord server or connected to Twitch, YouTube, Kick, or Social Stream Ninja.
 
@@ -11,6 +11,7 @@ Contact us with privacy questions or deletion requests at **contact@gozarproduct
 This Privacy Policy applies to:
 
 - The StreamBridge Discord bot
+- The StreamBridge website and account dashboard
 - StreamBridge’s OAuth authorization pages and callback endpoints
 - Direct Twitch, YouTube, and Kick integrations
 - Optional Social Stream Ninja integrations
@@ -20,15 +21,15 @@ It does not govern Discord, Twitch, Google, YouTube, Kick, Social Stream Ninja, 
 
 ## 2. How StreamBridge works
 
-StreamBridge relays chat messages between configured Discord channels and enabled streaming platforms.
+StreamBridge relays chat messages between an optionally configured Discord channel and enabled streaming platforms. A bridge can also operate without Discord.
 
-Depending on a server administrator’s configuration, StreamBridge may:
+Depending on a dashboard user’s or server administrator’s configuration, StreamBridge may:
 
-- Read messages sent in specifically configured Discord channels
+- Relay messages from one streaming platform to other connected platforms
+- Read messages sent in the specifically configured shared Discord relay channel
 - Forward those messages to Twitch, YouTube, Kick, or Social Stream Ninja
 - Receive public livestream chat messages from connected platforms
 - Repost those messages in a configured Discord channel
-- Relay messages from one streaming platform to other connected platforms
 - Connect to a Social Stream Ninja session
 - Automatically switch between Social Stream Ninja and direct platform connections
 - Suppress duplicate messages and relay loops
@@ -42,18 +43,17 @@ StreamBridge does not use artificial intelligence or language models to analyze 
 StreamBridge may access or store:
 
 - Discord server IDs
-- IDs of configured forwarding channels
-- The ID of the configured receiving channel
+- The ID of the shared Discord relay channel, when configured
 - Discord server names while constructing relay messages
 - Server-specific relay settings
 - Whether transport-switch notices are enabled
-- The direct relay message template selected by an administrator
+- The direct relay message template selected by a dashboard user or administrator
 
 Discord IDs are numeric identifiers assigned by Discord.
 
 ### 3.2 Discord message information
 
-StreamBridge processes messages only when they are sent in channels selected with `/forward add`.
+StreamBridge processes Discord messages for relay only when they are sent in the shared channel selected with `/forward set` or through the dashboard and forwarding from Discord is enabled.
 
 For those messages, StreamBridge may process:
 
@@ -97,7 +97,7 @@ StreamBridge does not intentionally create permanent archives of complete livest
 
 ### 3.4 Social Stream Ninja information
 
-When an administrator uses `/ssn connect`, StreamBridge stores:
+When a dashboard user or administrator connects Social Stream Ninja through the dashboard or `/ssn connect`, StreamBridge stores:
 
 - The Social Stream Ninja session ID
 - The selected relay-target platforms
@@ -109,14 +109,31 @@ StreamBridge does not require or store the separate password used for password-p
 
 Messages routed through Social Stream Ninja may be processed by Social Stream Ninja’s infrastructure according to its own practices.
 
-### 3.5 YouTube authorization information
+### 3.5 Dashboard accounts, linked identities, and sessions
 
-When an administrator authorizes YouTube, StreamBridge stores:
+Users may sign in to the StreamBridge dashboard with Discord, Google, Twitch, or Kick and may link additional supported identities to the same StreamBridge account. For each linked identity, StreamBridge stores:
+
+- Platform name
+- Platform account identifier
+- Display name
+- Profile image URL, when supplied
+- Granted OAuth scopes
+- Encrypted OAuth access and refresh tokens, when supplied by the platform
+- Creation and update timestamps
+
+StreamBridge also stores an internal dashboard-account identifier and the configuration for that account’s single bridge. A bridge may be configured with or without a Discord server.
+
+After a successful sign-in, StreamBridge places a random session cookie in the user’s browser. The cookie is HTTP-only, is sent only to the dashboard API, and normally expires after 30 days. StreamBridge stores a SHA-256 hash of the session token, the associated dashboard-account identifier, and session timestamps in its database rather than storing the raw session token.
+
+### 3.6 YouTube authorization information
+
+When a user authorizes Google/YouTube, StreamBridge stores:
 
 - Dashboard account associated with the authorization
-- Authorized YouTube channel ID
-- YouTube channel title
-- An encrypted OAuth refresh token
+- Google account subject identifier
+- Google display name and profile image URL, when supplied
+- Granted OAuth scopes
+- Encrypted OAuth access and refresh tokens
 
 StreamBridge requests the following Google OAuth scope:
 
@@ -140,14 +157,16 @@ StreamBridge uses YouTube API Services. Its use and transfer of information rece
 
 Use of YouTube features is also subject to the [Google Privacy Policy](https://policies.google.com/privacy), [YouTube Terms of Service](https://www.youtube.com/t/terms), and [YouTube API Services Developer Policies](https://developers.google.com/youtube/terms/developer-policies).
 
-### 3.6 Kick authorization information
+### 3.7 Kick authorization information
 
-When an administrator authorizes Kick, StreamBridge stores:
+When a user authorizes Kick, StreamBridge stores:
 
 - Dashboard account associated with the authorization
 - Kick broadcaster user ID
 - Kick broadcaster username
-- An encrypted OAuth refresh token
+- Kick profile image URL, when supplied
+- Granted OAuth scopes
+- Encrypted OAuth access and refresh tokens
 
 StreamBridge requests these Kick permissions:
 
@@ -164,13 +183,13 @@ They are used to:
 - Receive public chat messages
 - Post relayed messages using the linked Kick account
 
-Although Kick may make additional user information available under an authorized scope, StreamBridge’s current implementation extracts and stores only the broadcaster ID, username, and authorization token needed for these functions. It does not intentionally store the broadcaster’s email address.
+Although Kick may make additional user information available under an authorized scope, StreamBridge’s current implementation stores only the broadcaster ID, username, profile image URL when supplied, granted scopes, and authorization tokens needed for these functions. It does not intentionally store the broadcaster’s email address.
 
 StreamBridge never receives or stores the user’s Kick password. Authentication occurs directly on Kick’s website.
 
-### 3.7 Twitch information
+### 3.8 Twitch information
 
-When a user links Twitch through the dashboard, StreamBridge stores the Twitch account ID, display name, profile image URL, and encrypted renewable OAuth authorization. A linked Twitch account may be assigned to one or more bridges owned by the same dashboard account.
+When a user links Twitch through the dashboard, StreamBridge stores the Twitch account ID, display name, profile image URL, granted OAuth scopes, and encrypted access and refresh tokens. A linked Twitch account may be assigned to the single bridge owned by that dashboard account.
 
 For Twitch chat, StreamBridge may process:
 
@@ -191,7 +210,7 @@ A short-lived in-memory cache may retain Twitch user IDs or login names and prof
 
 StreamBridge uses the linked Twitch identity to read and post chat for an enabled bridge. Other dashboard accounts and Discord servers do not receive that account's OAuth credentials.
 
-### 3.8 OAuth state and temporary authorization data
+### 3.9 OAuth state and temporary authorization data
 
 Discord, Google/YouTube, Twitch, and Kick dashboard authorization links use random state values to associate an OAuth response with the correct dashboard session.
 
@@ -203,9 +222,9 @@ Pending authorization data:
 - Is removed after use or expiration
 - Does not include a user’s platform password
 
-Kick authorization also uses PKCE verification data, which is stored temporarily in memory until the authorization completes or expires.
+Kick authorization also uses a PKCE verifier, which is stored temporarily in the StreamBridge OAuth-state database record until the authorization completes or expires.
 
-### 3.9 Duplicate-prevention and delivery history
+### 3.10 Duplicate-prevention and delivery history
 
 To prevent duplicate deliveries and relay loops, StreamBridge stores limited event and delivery records containing:
 
@@ -224,7 +243,7 @@ Duplicate-prevention and delivery records are retained for approximately **30 da
 
 StreamBridge also keeps a short-lived, in-memory reflection tracker for messages it recently sent. Those entries normally expire after approximately two minutes and are not written to the database.
 
-### 3.10 Logs
+### 3.11 Logs
 
 StreamBridge creates operational logs that may include:
 
@@ -283,14 +302,14 @@ StreamBridge shares information only as needed to provide the configured relay s
 
 ### 6.1 Administrator-selected destinations
 
-A message sent in a configured forwarding channel may be sent to:
+A message sent in the configured shared Discord relay channel, or in a connected streaming chat, may be sent to:
 
 - Twitch
 - YouTube
 - Kick
+- The configured shared Discord relay channel
 - Social Stream Ninja
 - Other platforms selected through Social Stream Ninja
-- A configured Discord receiving channel
 
 Relaying necessarily makes the sender’s display name, source platform, message, and potentially avatar visible to users of those destinations.
 
@@ -329,6 +348,7 @@ StreamBridge generally retains information as follows:
 
 - **Server configuration:** Until changed, cleared, or deleted at an administrator’s request
 - **Linked platform authorization records:** Until the identity is unlinked, the authorization becomes unusable, or deletion is requested
+- **Dashboard sessions:** Until logout, deletion, or expiration, normally no more than 30 days
 - **Duplicate and delivery history:** Approximately 30 days
 - **Pending OAuth state:** Approximately ten minutes
 - **Reflection tracking:** Approximately two minutes in memory
@@ -344,7 +364,7 @@ Backups, if maintained, may retain deleted records temporarily until they are ov
 
 StreamBridge uses reasonable technical measures designed to protect information, including:
 
-- Encryption of stored Google/YouTube, Twitch, and Kick access and refresh tokens using Fernet symmetric encryption
+- Encryption of stored Discord, Google/YouTube, Twitch, and Kick access and refresh tokens using Fernet symmetric encryption
 - HTTPS for OAuth callbacks
 - TLS-protected connections to supported platform APIs
 - Signed-webhook verification for Kick events
@@ -360,15 +380,16 @@ No system can guarantee absolute security. Users should immediately contact **co
 
 Discord server administrators can limit StreamBridge’s access by:
 
-- Adding only specific forwarding channels
-- Removing a forwarding channel with `/forward remove`
-- Removing every forwarding channel with `/forward clear`
-- Disabling Discord receiving with `/receive clear`
+- Selecting one shared relay channel with `/forward set`, `/receive set`, or the dashboard
+- Disabling forwarding from Discord with `/forward clear`
+- Disabling forwarding to Discord with `/receive clear`
 - Disconnecting Social Stream Ninja with `/ssn disconnect`
 - Disabling a direct connection in the dashboard
 - Removing StreamBridge from the Discord server
 
-Disabling a platform for one bridge does not unlink the identity or revoke the platform grant. Users can revoke the grant through the platform and may request deletion of the stored linked identity.
+Dashboard users can disconnect a linked identity with the **Disconnect** button. Disconnecting deletes StreamBridge’s stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. Disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. To avoid locking a user out, StreamBridge requires another sign-in identity to be linked before the final identity can be disconnected.
+
+Disabling a platform connection without disconnecting its identity does not delete the identity or revoke the platform grant. Disconnecting an identity from StreamBridge also does not necessarily revoke the authorization at the provider; users should revoke it through the provider’s account settings when desired.
 
 ### Revoke Google or YouTube access
 
@@ -376,13 +397,17 @@ Users can review or revoke StreamBridge’s Google authorization from their [Goo
 
 ### Revoke Kick access
 
-Users may revoke access through Kick’s account or connected-application settings when available. They may also contact **eds.gozar@gmail.com** for assistance deleting StreamBridge’s stored Kick authorization.
+Users may revoke access through Kick’s account or connected-application settings when available. They may also contact **contact@gozarproductions.com** for assistance deleting StreamBridge’s stored Kick authorization.
+
+### Revoke Discord or Twitch access
+
+Users may revoke StreamBridge through Discord’s or Twitch’s authorized-application settings. They may also use the dashboard’s **Disconnect** button to delete StreamBridge’s locally stored identity and authorization credentials, subject to the requirement to retain at least one sign-in method.
 
 ### Request deletion
 
 A Discord server owner, authorized server administrator, or authorized platform-account owner may request access to or deletion of applicable stored information by emailing:
 
-**eds.gozar@gmail.com**
+**contact@gozarproductions.com**
 
 Please include:
 
@@ -407,13 +432,13 @@ Depending on where you live, you may have rights regarding personal information,
 - Receive a portable copy of certain information
 - Lodge a complaint with a data-protection authority
 
-To exercise an applicable right, contact **eds.gozar@gmail.com**.
+To exercise an applicable right, contact **contact@gozarproductions.com**.
 
 ## 11. Children’s privacy
 
 StreamBridge is not directed to children under 13 or under the minimum age required by Discord or a connected platform in their jurisdiction.
 
-We do not knowingly collect personal information from children in violation of applicable law. If you believe a child’s information has been processed improperly, contact **eds.gozar@gmail.com**.
+We do not knowingly collect personal information from children in violation of applicable law. If you believe a child’s information has been processed improperly, contact **contact@gozarproductions.com**.
 
 ## 12. International processing
 
@@ -444,5 +469,5 @@ The updated policy will show a new “Last updated” date. If a change material
 
 For privacy questions, requests, or complaints:
 
-**Operator:** Gozar Productions LLC
+**Operator:** Gozar Productions LLC</br>
 **Email:** contact@gozarproductions.com
