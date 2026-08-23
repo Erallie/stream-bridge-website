@@ -19,10 +19,8 @@
 
     type Workspace = {
         id?: string;
-        name: string;
         discord_guild_id: string | null;
         ssn_session_id: string | null;
-        ssn_password: string | null;
         ssn_targets: string[];
         relay_template: string;
         transport_announcements: boolean;
@@ -249,21 +247,6 @@
                 method: 'PATCH',
                 body: JSON.stringify(item)
             });
-
-            await Promise.all(
-                item.connections
-					.filter((connection) => directPlatforms.includes(connection.provider))
-                    .map((connection) =>
-						request(`/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`, {
-                                method: 'PUT',
-                                body: JSON.stringify({
-								provider_user_id: connection.provider_user_id,
-                                    enabled: connection.enabled,
-                                    settings: connection.settings
-                                })
-						})
-                    )
-            );
 
 			saved = 'Bridge saved';
         } catch (caughtError) {
