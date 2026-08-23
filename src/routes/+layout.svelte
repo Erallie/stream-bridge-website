@@ -1,5 +1,6 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
+	import logo from '$lib/assets/logo.svg';
+    import favicon from '$lib/assets/favicon.svg';
 	import { resolve } from '$app/paths';
 	import '../app.css';
 
@@ -12,7 +13,7 @@
 
 <header class="site-header">
 	<a class="brand" href={resolve('/')} aria-label="StreamBridge home">
-		<img class="brand-logo" src={favicon} alt="" />
+		<img class="brand-logo" src={logo} alt="" />
 		StreamBridge
 	</a>
 	<nav aria-label="Main navigation">
@@ -25,7 +26,7 @@
 <main>{@render children()}</main>
 <footer>
 	<div class="footer-brand">
-		<img class="footer-logo" src={favicon} alt="StreamBridge logo" />
+		<img class="footer-logo" src={logo} alt="StreamBridge logo" />
 
 		<div>
 			<strong>StreamBridge</strong>
