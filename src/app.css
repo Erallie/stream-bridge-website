@@ -523,6 +523,22 @@ textarea:focus {
 	display: flex;
 	align-items: center;
 	gap: 13px;
+	min-width: 0;
+}
+
+.account > div:not(.account-actions) {
+	min-width: 0;
+	max-width: 100%;
+	flex: 1 1 auto;
+	overflow: hidden;
+}
+
+.account > div:not(.account-actions) strong,
+.account > div:not(.account-actions) .muted {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .avatar {
@@ -531,6 +547,7 @@ textarea:focus {
 	object-fit: cover;
 	background: #292c35;
 	border-radius: 50%;
+	flex-shrink: 0;
 }
 
 .provider-logo {
@@ -543,7 +560,13 @@ textarea:focus {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	min-width: 0;
 	margin-left: auto;
+	flex: 0 0 auto;
+}
+
+.account-actions .button {
+	white-space: nowrap;
 }
 
 /* Workspaces */
@@ -667,5 +690,33 @@ textarea:focus {
 
 	.page-title h1 {
 		font-size: 43px;
+	}
+}
+
+@media (max-width: 500px) {
+	.account {
+		display: grid;
+		grid-template-columns: 42px minmax(0, 1fr);
+		align-items: center;
+	}
+
+	.account > .avatar {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.account > div:not(.account-actions) {
+		grid-column: 2;
+		grid-row: 1;
+		max-width: 100%;
+	}
+
+	.account-actions {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		justify-content: flex-end;
+		margin-left: 0;
+		padding-top: 2px;
+		flex-wrap: wrap;
 	}
 }
