@@ -753,17 +753,3 @@ textarea:focus {
 		flex-wrap: wrap;
 	}
 }
-
-.google-auth-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-}
-
-.google-auth-button img {
-	display: block;
-	width: 20px;
-	height: 20px;
-	object-fit: contain;
-}

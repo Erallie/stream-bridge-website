@@ -2,7 +2,6 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
-	import googleG from '$lib/assets/google-g.png';
 
 	type Identity = {
 		provider: string;
@@ -60,7 +59,7 @@
 	const discordInviteUrl = 'https://discord.com/oauth2/authorize?client_id=1538972596165419069';
 	const providerLogos: Record<string, string> = {
 		discord: 'https://cdn.simpleicons.org/discord/5865F2',
-		google: googleG,
+		google: 'https://cdn.simpleicons.org/google',
 		twitch: 'https://cdn.simpleicons.org/twitch/9146FF',
 		kick: 'https://cdn.simpleicons.org/kick/53FC18'
 	};
