@@ -526,15 +526,14 @@ textarea:focus {
 	min-width: 0;
 }
 
-.account > div:not(.account-actions) {
+.account > div:not(.account-actions):not(.provider-logo-container) {
 	min-width: 0;
 	max-width: 100%;
 	flex: 1 1 auto;
-	overflow: hidden;
 }
 
-.account > div:not(.account-actions) strong,
-.account > div:not(.account-actions) .muted {
+.account > div:not(.account-actions):not(.provider-logo-container) strong,
+.account > div:not(.account-actions):not(.provider-logo-container) .muted {
 	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -714,11 +713,11 @@ textarea:focus {
 		grid-row: 1;
 	}
 
-	.account > div:not(.account-actions) {
-		grid-column: 2;
-		grid-row: 1;
-		max-width: 100%;
-	}
+	.account > div:not(.account-actions):not(.provider-logo-container) {
+        grid-column: 2;
+        grid-row: 1;
+        max-width: 100%;
+    }
 
 	.account-actions {
 		grid-column: 1 / -1;
