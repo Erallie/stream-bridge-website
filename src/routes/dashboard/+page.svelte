@@ -87,21 +87,22 @@
     }
 
     function platformName(platform: string): string {
-        return platform === 'youtube'
-            ? 'YouTube'
-            : platform[0].toUpperCase() + platform.slice(1);
+		return platform === 'youtube' ? 'YouTube' : platform[0].toUpperCase() + platform.slice(1);
+	}
+
+	function activeConnections(item: Workspace): string {
+		const platforms = item.runtime_status.direct_platforms.map(platformName);
+		if (item.discord_enabled) {
+			platforms.push('Discord');
+		}
+		return [...new Set(platforms)].join(', ') || 'none';
     }
 
     function findIdentity(provider: string): Identity | undefined {
-        return me.identities.find(
-            (identity) => identity.provider === provider
-        );
+		return me.identities.find((identity) => identity.provider === provider);
     }
 
-    async function request(
-        path: string,
-        options: RequestInit = {}
-    ): Promise<any> {
+	async function request(path: string, options: RequestInit = {}): Promise<any> {
         const response = await fetch(api + path, {
             credentials: 'include',
             headers: {
@@ -114,9 +115,7 @@
         const body = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(
-                body.error || `Request failed (${response.status})`
-            );
+			throw new Error(body.error || `Request failed (${response.status})`);
         }
 
         return body;
@@ -142,8 +141,7 @@
             me = await initialRequest('/dashboard/api/me');
 
             if (me.authenticated) {
-                const [workspaceResult, guildResult] =
-                    await Promise.allSettled([
+				const [workspaceResult, guildResult] = await Promise.allSettled([
                         initialRequest('/dashboard/api/workspaces'),
                         findIdentity('discord')
                             ? initialRequest('/dashboard/api/discord/guilds')
@@ -155,12 +153,14 @@
                     try {
                         await loadWorkspaceChannels(workspaces);
                     } catch (caughtError) {
-                        error = caughtError instanceof Error
+						error =
+							caughtError instanceof Error
                             ? caughtError.message
                             : 'Could not load Discord channels';
                     }
                 } else {
-                    error = workspaceResult.reason instanceof Error
+					error =
+						workspaceResult.reason instanceof Error
                         ? workspaceResult.reason.message
                         : 'Could not load bridges';
                 }
@@ -168,7 +168,8 @@
                 if (guildResult.status === 'fulfilled') {
                     discordGuilds = guildResult.value.guilds;
                 } else if (!error) {
-                    error = guildResult.reason instanceof Error
+					error =
+						guildResult.reason instanceof Error
                         ? guildResult.reason.message
                         : 'Could not load Discord servers';
                 }
@@ -182,10 +183,7 @@
             discordGuilds = [];
             channelsByGuild = {};
             loading = false;
-            error =
-                caughtError instanceof Error
-                    ? caughtError.message
-                    : 'Could not reach StreamBridge';
+			error = caughtError instanceof Error ? caughtError.message : 'Could not reach StreamBridge';
         } finally {
             loading = false;
         }
@@ -206,9 +204,7 @@
         if (!guildId || channelsByGuild[guildId]) {
             return;
         }
-        const data = await request(
-            `/dashboard/api/discord/guilds/${guildId}/channels`
-        );
+		const data = await request(`/dashboard/api/discord/guilds/${guildId}/channels`);
         channelsByGuild = {
             ...channelsByGuild,
             [guildId]: data.channels
@@ -216,9 +212,7 @@
     }
 
     function discordChannels(item: Workspace): DiscordChannel[] {
-        return item.discord_guild_id
-            ? channelsByGuild[item.discord_guild_id] || []
-            : [];
+		return item.discord_guild_id ? channelsByGuild[item.discord_guild_id] || [] : [];
     }
 
     function setSsnTargets(item: Workspace, value: string): void {
@@ -258,31 +252,22 @@
 
             await Promise.all(
                 item.connections
-                    .filter((connection) =>
-                        directPlatforms.includes(connection.provider)
-                    )
+					.filter((connection) => directPlatforms.includes(connection.provider))
                     .map((connection) =>
-                        request(
-                            `/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`,
-                            {
+						request(`/dashboard/api/workspaces/${item.id}/connections/${connection.provider}`, {
                                 method: 'PUT',
                                 body: JSON.stringify({
-                                    provider_user_id:
-                                        connection.provider_user_id,
+								provider_user_id: connection.provider_user_id,
                                     enabled: connection.enabled,
                                     settings: connection.settings
                                 })
-                            }
-                        )
+						})
                     )
             );
 
-            saved = `${item.name} saved`;
+			saved = 'Bridge saved';
         } catch (caughtError) {
-            saveError =
-                caughtError instanceof Error
-                    ? caughtError.message
-                    : 'Could not save workspace';
+			saveError = caughtError instanceof Error ? caughtError.message : 'Could not save workspace';
         }
     }
 
@@ -292,14 +277,10 @@
         identity: Identity,
         enabled: boolean
     ): void {
-        const existing = item.connections.find(
-            (connection) => connection.provider === provider
-        );
+		const existing = item.connections.find((connection) => connection.provider === provider);
 
         item.connections = [
-            ...item.connections.filter(
-                (connection) => connection.provider !== provider
-            ),
+			...item.connections.filter((connection) => connection.provider !== provider),
             {
                 provider,
                 provider_user_id: identity.provider_user_id,
@@ -338,8 +319,7 @@
         <h1>StreamBridge dashboard</h1>
 
         <p class="muted">
-            Link the accounts you use, then create a bridge for a
-            Discord server or a standalone stream.
+			Link the accounts you use, then create a bridge for a Discord server or a standalone stream.
         </p>
     </div>
 
@@ -350,24 +330,18 @@
     {/if}
 
     {#if loading && !error}
-        <div class="panel">
-            Loading your bridge…
-        </div>
+		<div class="panel">Loading your bridge…</div>
     {:else if !me.authenticated}
         <section class="panel">
             <h2>Sign in to continue</h2>
 
             <p class="muted">
-                These providers only establish who you are.
-                StreamBridge never receives your password.
+				These providers only establish who you are. StreamBridge never receives your password.
             </p>
 
             <div class="card-grid">
                 {#each providers as provider}
-                    <button
-                        class="button secondary"
-                        onclick={() => auth(provider)}
-                    >
+					<button class="button secondary" onclick={() => auth(provider)}>
                         Continue with {providerName(provider)}
                     </button>
                 {/each}
@@ -380,18 +354,12 @@
                     <h2>Linked accounts</h2>
 
                     <p class="muted">
-                        Authorize each platform once. Linked accounts can
-                        sign you in and can be assigned to any bridge you
-                        manage.
+						Authorize each platform once. Linked accounts can sign you in and can be assigned to any
+						bridge you manage.
                     </p>
                 </div>
 
-                <button
-                    class="button secondary small"
-                    onclick={logout}
-                >
-                    Sign out
-                </button>
+				<button class="button secondary small" onclick={logout}> Sign out </button>
             </div>
 
             <div class="card-grid">
@@ -400,11 +368,7 @@
 
                     <div class="panel account">
                         {#if identity?.avatar_url}
-                            <img
-                                class="avatar"
-                                src={identity.avatar_url}
-                                alt=""
-                            />
+							<img class="avatar" src={identity.avatar_url} alt="" />
                         {:else}
                             <div class="avatar"></div>
                         {/if}
@@ -421,12 +385,7 @@
 
                         <div class="account-actions">
                             {#if !identity}
-                                <button
-                                    class="button small"
-                                    onclick={() => auth(provider, 'link')}
-                                >
-                                    Link
-                                </button>
+								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
                             {:else}
                                 <span aria-label="Linked">✓</span>
                             {/if}
@@ -442,8 +401,7 @@
                     <h2>Your bridge</h2>
 
                     <p class="muted">
-                        Configure chat relay for your connected streaming
-                        accounts, with or without Discord.
+						Configure chat relay for your connected streaming accounts, with or without Discord.
                     </p>
                 </div>
             </div>
@@ -453,8 +411,7 @@
                     class="panel workspace"
                     onsubmit={(event) => {
                         event.preventDefault();
-                        const targetsInput = event.currentTarget.elements
-                            .namedItem('ssn_targets');
+						const targetsInput = event.currentTarget.elements.namedItem('ssn_targets');
                         if (targetsInput instanceof HTMLInputElement) {
                             setSsnTargets(item, targetsInput.value);
                         }
@@ -463,37 +420,33 @@
                 >
                     <div class="workspace-header">
                         <div>
-                            <h2>
-                                {item.name || 'Untitled bridge'}
-                            </h2>
+							<h2>Bridge status</h2>
 
                             <div class="muted">
                                 SSN: {item.runtime_status.ssn} · Direct:
-                                {item.runtime_status.direct_platforms.join(', ') || 'none'}
+								{activeConnections(item)}
                             </div>
                         </div>
 
                         <label class="check">
-                            <input
-                                type="checkbox"
-                                bind:checked={item.enabled}
-                            />
+							<input type="checkbox" bind:checked={item.enabled} />
 
                             Running
                         </label>
                     </div>
 
-                    <div class="form-grid">
-                        <label>
-                            Bridge name
+					<div class="configuration-sections">
+						<section class="configuration-section">
+							<div class="configuration-heading">
+								<h3>Social Stream Ninja Connection</h3>
 
-                            <input
-                                bind:value={item.name}
-                                maxlength="80"
-                                required
-                            />
-                        </label>
+								<p class="muted">
+									Connect this bridge to Social Stream Ninja and choose which SSN platforms receive
+									relayed messages.
+								</p>
+							</div>
 
+							<div class="form-grid">
                         <label class="full">
                             Social Stream Ninja session ID
 
@@ -506,24 +459,7 @@
                                 spellcheck="false"
                             />
 
-                            <span class="muted">
-                                Leave blank and save to disconnect SSN.
-                            </span>
-                        </label>
-
-                        <label class="full">
-                            Direct relay message
-
-                            <textarea
-                                rows="2"
-                                bind:value={item.relay_template}
-                                required
-                            ></textarea>
-
-                            <span class="muted">
-                                Must include {'{name}'},
-                                {'{platform}'}, and {'{message}'}.
-                            </span>
+									<span class="muted"> Leave blank and save to disconnect SSN. </span>
                         </label>
 
                         <label class="full">
@@ -532,63 +468,54 @@
                             <input
                                 name="ssn_targets"
                                 value={item.ssn_targets.join(', ')}
-                                onblur={(event) =>
-                                    setSsnTargets(
-                                        item,
-                                        event.currentTarget.value
-                                    )}
+										onblur={(event) => setSsnTargets(item, event.currentTarget.value)}
                                 placeholder="twitch, youtube, kick, tiktok, ..."
                                 spellcheck="false"
                             />
 
                             <span class="muted">
-                                Enter any SSN platform identifiers,
-                                separated by commas. This is not limited
-                                to StreamBridge's direct platforms.
+										Enter any SSN platform identifiers, separated by commas. This is not limited to
+										StreamBridge's direct platforms.
                             </span>
                         </label>
+							</div>
+						</section>
 
+						<section class="configuration-section">
+							<div class="configuration-heading">
+								<h3>Direct Connection</h3>
+
+								<p class="muted">
+									Configure the connections StreamBridge uses when relaying directly between
+									platforms.
+								</p>
+							</div>
+
+							<div class="form-grid">
                         <div class="full">
-                            <strong>
-                                Direct platform connections
-                            </strong>
+									<strong> Direct platform connections </strong>
 
                             <p class="muted">
-                                Link an account above, then choose
-                                which accounts this bridge may use
-                                when SSN is unavailable. Changes take
-                                effect when you press Save bridge.
+										Link an account above, then choose which accounts this bridge may use when SSN
+										is unavailable. Changes take effect when you press Save bridge.
                             </p>
 
                             <div class="checks">
                                 {#each directPlatforms as platform}
-                                    {@const identity = findIdentity(
-                                        identityProvider(platform)
-                                    )}
+											{@const identity = findIdentity(identityProvider(platform))}
 
-                                    {@const connected =
-                                        item.connections.find(
-                                            (connection) =>
-                                                connection.provider ===
-                                                platform
+											{@const connected = item.connections.find(
+												(connection) => connection.provider === platform
                                         )}
 
                                     <label class="check">
                                         <input
                                             type="checkbox"
                                             disabled={!identity}
-                                            checked={Boolean(
-                                                connected?.enabled
-                                            )}
+													checked={Boolean(connected?.enabled)}
                                             onchange={(event) => {
                                                 if (identity) {
-                                                    setConnection(
-                                                        item,
-                                                        platform,
-                                                        identity,
-                                                        event.currentTarget
-                                                            .checked
-                                                    );
+															setConnection(item, platform, identity, event.currentTarget.checked);
                                                 }
                                             }}
                                         />
@@ -617,6 +544,17 @@
                             </div>
                         </div>
 
+								<label class="full">
+									Direct relay message
+
+									<textarea rows="2" bind:value={item.relay_template} required></textarea>
+
+									<span class="muted">
+										Must include {'{name}'},
+										{'{platform}'}, and {'{message}'}.
+									</span>
+								</label>
+
                         {#if item.discord_enabled}
                             <label>
                                 Discord server
@@ -625,19 +563,14 @@
                                     required
                                     value={item.discord_guild_id || ''}
                                     onchange={(event) => {
-                                        item.discord_guild_id =
-                                            event.currentTarget.value || null;
+												item.discord_guild_id = event.currentTarget.value || null;
                                         item.discord_channel_id = null;
                                         if (item.discord_guild_id) {
-                                            loadDiscordChannels(
-                                                item.discord_guild_id
-                                            );
+													loadDiscordChannels(item.discord_guild_id);
                                         }
                                     }}
                                 >
-                                    <option value="">
-                                        Select a Discord server
-                                    </option>
+											<option value=""> Select a Discord server </option>
 
                                     {#each discordGuilds as guild}
                                         <option value={guild.id}>
@@ -651,13 +584,8 @@
                                 <label>
                                     Discord relay channel
 
-                                    <select
-                                        bind:value={item.discord_channel_id}
-                                        required
-                                    >
-                                        <option value="">
-                                            Select a channel
-                                        </option>
+											<select bind:value={item.discord_channel_id} required>
+												<option value=""> Select a channel </option>
 
                                         {#each discordChannels(item) as channel}
                                             <option value={channel.id}>
@@ -667,31 +595,19 @@
                                     </select>
 
                                     <span class="muted">
-                                        The same text channel or
-                                        voice-channel side chat is used in
-                                        both directions.
+												The same text channel or voice-channel side chat is used in both directions.
                                     </span>
                                 </label>
 
                                 <div class="checks full">
                                     <label class="check">
-                                        <input
-                                            type="checkbox"
-                                            bind:checked={
-                                                item.discord_forward_enabled
-                                            }
-                                        />
+												<input type="checkbox" bind:checked={item.discord_forward_enabled} />
 
                                         Forward messages from Discord
                                     </label>
 
                                     <label class="check">
-                                        <input
-                                            type="checkbox"
-                                            bind:checked={
-                                                item.discord_receive_enabled
-                                            }
-                                        />
+												<input type="checkbox" bind:checked={item.discord_receive_enabled} />
 
                                         Forward messages to Discord
                                     </label>
@@ -699,27 +615,17 @@
                             {/if}
 
                             <label class="check full">
-                                <input
-                                    type="checkbox"
-                                    bind:checked={
-                                        item.transport_announcements
-                                    }
-                                />
+										<input type="checkbox" bind:checked={item.transport_announcements} />
 
-                                Announce switches between SSN and direct
-                                relay in configured Discord channels
+										Announce switches between SSN and direct relay in configured Discord channels
                             </label>
                         {/if}
                     </div>
+						</section>
+					</div>
 
                     <div class="workspace-actions">
-                        <button
-                            class="button"
-                            type="submit"
-                        >
-                            Save bridge
-                        </button>
-
+						<button class="button" type="submit"> Save bridge </button>
                     </div>
 
                     {#if saveTarget === item && saveError}
@@ -740,6 +646,31 @@
 </div>
 
 <style>
+	.configuration-sections {
+		display: grid;
+		gap: 22px;
+	}
+
+	.configuration-section {
+		padding: 22px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.025);
+	}
+
+	.configuration-heading {
+		margin-bottom: 18px;
+	}
+
+	.configuration-heading h3,
+	.configuration-heading p {
+		margin-top: 0;
+	}
+
+	.configuration-heading p {
+		margin-bottom: 0;
+	}
+
     .workspace-actions {
         display: flex;
         justify-content: flex-start;
