@@ -3,10 +3,14 @@
 </script>
 
 <svelte:head
-	><title>StreamBridge — One chat across every platform</title><meta
+	>
+    <title>StreamBridge — One chat across every platform</title>
+    <meta
 		name="description"
 		content="Relay livestream chat between Discord, Twitch, YouTube, Kick, and Social Stream Ninja."
-	/></svelte:head
+	/>
+    <link rel="canonical" href="https://streambridge.gozarproductions.com/" />
+    </svelte:head
 >
 <section class="hero">
 	<div class="eyebrow">Cross-platform community chat</div>

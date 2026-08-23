@@ -8,6 +8,7 @@
 <svelte:head>
 	<title>Terms of Service — StreamBridge</title>
 	<meta name="description" content="StreamBridge terms of service" />
+    <link rel="canonical" href="https://streambridge.gozarproductions.com/terms" />
 </svelte:head>
 
 <article class="page legal">
