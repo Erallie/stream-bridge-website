@@ -19,7 +19,7 @@
 	<nav aria-label="Main navigation">
 		<a href={resolve('/#features')}>Features</a>
 		<a
-			href="https://github.com/Erallie/stream-bridge/blob/main/README.md"
+			href="https://github.com/Erallie/stream-bridge#readme"
 			target="_blank"
 			rel="noreferrer"
 		>
