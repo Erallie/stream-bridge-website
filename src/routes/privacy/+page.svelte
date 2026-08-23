@@ -1,18 +1,15 @@
 <script lang="ts">
-    import policy from '$lib/legal/privacy-policy.md?raw';
-    import { renderLegalMarkdown } from '$lib/legal-markdown';
+	import policy from '$lib/legal/privacy-policy.md?raw';
+	import { renderLegalMarkdown } from '$lib/legal-markdown';
 
-    const renderedPolicy = renderLegalMarkdown(policy);
+	const renderedPolicy = renderLegalMarkdown(policy);
 </script>
 
 <svelte:head>
-    <title>Privacy Policy — StreamBridge</title>
-    <meta
-        name="description"
-        content="StreamBridge privacy policy"
-    />
+	<title>Privacy Policy — StreamBridge</title>
+	<meta name="description" content="StreamBridge privacy policy" />
 </svelte:head>
 
 <article class="page legal">
-    {@html renderedPolicy}
+	{@html renderedPolicy}
 </article>

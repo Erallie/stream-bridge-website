@@ -1,93 +1,93 @@
 <script lang="ts">
-    import { base } from '$app/paths';
-    import { onMount } from 'svelte';
-    import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
+	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
+	import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
 
-    type Identity = {
-        provider: string;
-        provider_user_id: string;
-        display_name: string;
-        avatar_url: string;
-    };
+	type Identity = {
+		provider: string;
+		provider_user_id: string;
+		display_name: string;
+		avatar_url: string;
+	};
 
-    type Connection = {
-        provider: string;
-        provider_user_id: string;
-        enabled: boolean;
-        settings: Record<string, string>;
-    };
+	type Connection = {
+		provider: string;
+		provider_user_id: string;
+		enabled: boolean;
+		settings: Record<string, string>;
+	};
 
-    type Workspace = {
-        id?: string;
-        discord_guild_id: string | null;
-        ssn_session_id: string | null;
-        ssn_targets: string[];
-        relay_template: string;
-        transport_announcements: boolean;
-        enabled: boolean;
-        connections: Connection[];
-        discord_channel_id: string | null;
-        discord_enabled: boolean;
-        discord_forward_enabled: boolean;
-        discord_receive_enabled: boolean;
-        runtime_status: {
-            ssn: string;
-            direct_platforms: string[];
-        };
-    };
+	type Workspace = {
+		id?: string;
+		discord_guild_id: string | null;
+		ssn_session_id: string | null;
+		ssn_targets: string[];
+		relay_template: string;
+		transport_announcements: boolean;
+		enabled: boolean;
+		connections: Connection[];
+		discord_channel_id: string | null;
+		discord_enabled: boolean;
+		discord_forward_enabled: boolean;
+		discord_receive_enabled: boolean;
+		runtime_status: {
+			ssn: string;
+			direct_platforms: string[];
+		};
+	};
 
-    type AccountState = {
-        authenticated: boolean;
-        identities: Identity[];
-    };
+	type AccountState = {
+		authenticated: boolean;
+		identities: Identity[];
+	};
 
-    type DiscordGuild = {
-        id: string;
-        name: string;
-    };
+	type DiscordGuild = {
+		id: string;
+		name: string;
+	};
 
-    type DiscordChannel = {
-        id: string;
-        name: string;
-        type: 'text' | 'voice';
-    };
+	type DiscordChannel = {
+		id: string;
+		name: string;
+		type: 'text' | 'voice';
+	};
 
-    const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
+	const api = PUBLIC_STREAMBRIDGE_API_URL.replace(/\/$/, '');
 
-    const providers = ['discord', 'google', 'twitch', 'kick'];
-    const directPlatforms = ['twitch', 'kick', 'youtube'];
+	const providers = ['discord', 'google', 'twitch', 'kick'];
+	const directPlatforms = ['twitch', 'kick', 'youtube'];
 
-    let loading = $state(true);
-    let error = $state('');
-    let saved = $state('');
-    let saveError = $state('');
-    let saveTarget = $state<Workspace | null>(null);
-    let accountMessage = $state('');
-    let accountError = $state('');
-    let disconnectingProvider = $state('');
+	let loading = $state(true);
+	let error = $state('');
+	let saved = $state('');
+	let saveError = $state('');
+	let saveTarget = $state<Workspace | null>(null);
+	let accountMessage = $state('');
+	let accountError = $state('');
+	let disconnectingProvider = $state('');
 
-    let me = $state<AccountState>({
-        authenticated: false,
-        identities: []
-    });
+	let me = $state<AccountState>({
+		authenticated: false,
+		identities: []
+	});
 
-    let workspaces = $state<Workspace[]>([]);
-    let discordGuilds = $state<DiscordGuild[]>([]);
-    let channelsByGuild = $state<Record<string, DiscordChannel[]>>({});
+	let workspaces = $state<Workspace[]>([]);
+	let discordGuilds = $state<DiscordGuild[]>([]);
+	let channelsByGuild = $state<Record<string, DiscordChannel[]>>({});
 
-    function providerName(provider: string): string {
-        if (provider === 'google') {
-            return 'Google / YouTube';
-        }
+	function providerName(provider: string): string {
+		if (provider === 'google') {
+			return 'Google / YouTube';
+		}
 
-        return provider[0].toUpperCase() + provider.slice(1);
-    }
+		return provider[0].toUpperCase() + provider.slice(1);
+	}
 
-    function identityProvider(platform: string): string {
-        return platform === 'youtube' ? 'google' : platform;
-    }
+	function identityProvider(platform: string): string {
+		return platform === 'youtube' ? 'google' : platform;
+	}
 
-    function platformName(platform: string): string {
+	function platformName(platform: string): string {
 		return platform === 'youtube' ? 'YouTube' : platform[0].toUpperCase() + platform.slice(1);
 	}
 
@@ -97,373 +97,379 @@
 			platforms.push('Discord');
 		}
 		return [...new Set(platforms)].join(', ') || 'none';
-    }
+	}
 
-    function findIdentity(provider: string): Identity | undefined {
+	function findIdentity(provider: string): Identity | undefined {
 		return me.identities.find((identity) => identity.provider === provider);
-    }
+	}
 
-	async function request(path: string, options: RequestInit = {}): Promise<any> {
-        const response = await fetch(api + path, {
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {})
-            },
-            ...options
-        });
+	async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+		const response = await fetch(api + path, {
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				...(options.headers || {})
+			},
+			...options
+		});
 
-        const body = await response.json().catch(() => ({}));
+		const body: unknown = await response.json().catch(() => ({}));
 
-        if (!response.ok) {
-			throw new Error(body.error || `Request failed (${response.status})`);
-        }
+		if (!response.ok) {
+			const message =
+				typeof body === 'object' && body !== null && 'error' in body
+					? String(body.error)
+					: `Request failed (${response.status})`;
+			throw new Error(message);
+		}
 
-        return body;
-    }
+		return body as T;
+	}
 
-    async function initialRequest(path: string): Promise<any> {
-        try {
-            return await request(path);
-        } catch (caughtError) {
-            if (!(caughtError instanceof TypeError)) {
-                throw caughtError;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            return request(path);
-        }
-    }
+	async function initialRequest<T>(path: string): Promise<T> {
+		try {
+			return await request(path);
+		} catch (caughtError) {
+			if (!(caughtError instanceof TypeError)) {
+				throw caughtError;
+			}
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			return request(path);
+		}
+	}
 
-    async function load(): Promise<void> {
-        loading = true;
-        error = '';
+	async function load(): Promise<void> {
+		loading = true;
+		error = '';
 
-        try {
-            me = await initialRequest('/dashboard/api/me');
+		try {
+			me = await initialRequest<AccountState>('/dashboard/api/me');
 
-            if (me.authenticated) {
+			if (me.authenticated) {
 				const [workspaceResult, guildResult] = await Promise.allSettled([
-                        initialRequest('/dashboard/api/workspaces'),
-                        findIdentity('discord')
-                            ? initialRequest('/dashboard/api/discord/guilds')
-                            : Promise.resolve({ guilds: [] })
-                    ]);
+					initialRequest<{ workspaces: Workspace[] }>('/dashboard/api/workspaces'),
+					findIdentity('discord')
+						? initialRequest<{ guilds: DiscordGuild[] }>('/dashboard/api/discord/guilds')
+						: Promise.resolve({ guilds: [] })
+				]);
 
-                if (workspaceResult.status === 'fulfilled') {
-                    workspaces = workspaceResult.value.workspaces;
-                    try {
-                        await loadWorkspaceChannels(workspaces);
-                    } catch (caughtError) {
+				if (workspaceResult.status === 'fulfilled') {
+					workspaces = workspaceResult.value.workspaces;
+					try {
+						await loadWorkspaceChannels(workspaces);
+					} catch (caughtError) {
 						error =
 							caughtError instanceof Error
-                            ? caughtError.message
-                            : 'Could not load Discord channels';
-                    }
-                } else {
+								? caughtError.message
+								: 'Could not load Discord channels';
+					}
+				} else {
 					error =
 						workspaceResult.reason instanceof Error
-                        ? workspaceResult.reason.message
-                        : 'Could not load bridges';
-                }
+							? workspaceResult.reason.message
+							: 'Could not load bridges';
+				}
 
-                if (guildResult.status === 'fulfilled') {
-                    discordGuilds = guildResult.value.guilds;
-                } else if (!error) {
+				if (guildResult.status === 'fulfilled') {
+					discordGuilds = guildResult.value.guilds;
+				} else if (!error) {
 					error =
 						guildResult.reason instanceof Error
-                        ? guildResult.reason.message
-                        : 'Could not load Discord servers';
-                }
-            }
-        } catch (caughtError) {
-            me = {
-                authenticated: false,
-                identities: []
-            };
-            workspaces = [];
-            discordGuilds = [];
-            channelsByGuild = {};
-            loading = false;
+							? guildResult.reason.message
+							: 'Could not load Discord servers';
+				}
+			}
+		} catch (caughtError) {
+			me = {
+				authenticated: false,
+				identities: []
+			};
+			workspaces = [];
+			discordGuilds = [];
+			channelsByGuild = {};
+			loading = false;
 			error = caughtError instanceof Error ? caughtError.message : 'Could not reach StreamBridge';
-        } finally {
-            loading = false;
-        }
-    }
+		} finally {
+			loading = false;
+		}
+	}
 
-    async function loadWorkspaceChannels(items: Workspace[]): Promise<void> {
-        const guildIds = [
-            ...new Set(
-                items
-                    .map((item) => item.discord_guild_id)
-                    .filter((value): value is string => Boolean(value))
-            )
-        ];
-        await Promise.all(guildIds.map(loadDiscordChannels));
-    }
+	async function loadWorkspaceChannels(items: Workspace[]): Promise<void> {
+		const guildIds = [
+			...new Set(
+				items
+					.map((item) => item.discord_guild_id)
+					.filter((value): value is string => Boolean(value))
+			)
+		];
+		await Promise.all(guildIds.map(loadDiscordChannels));
+	}
 
-    async function loadDiscordChannels(guildId: string): Promise<void> {
-        if (!guildId || channelsByGuild[guildId]) {
-            return;
-        }
-		const data = await request(`/dashboard/api/discord/guilds/${guildId}/channels`);
-        channelsByGuild = {
-            ...channelsByGuild,
-            [guildId]: data.channels
-        };
-    }
+	async function loadDiscordChannels(guildId: string): Promise<void> {
+		if (!guildId || channelsByGuild[guildId]) {
+			return;
+		}
+		const data = await request<{ channels: DiscordChannel[] }>(
+			`/dashboard/api/discord/guilds/${guildId}/channels`
+		);
+		channelsByGuild = {
+			...channelsByGuild,
+			[guildId]: data.channels
+		};
+	}
 
-    function discordChannels(item: Workspace): DiscordChannel[] {
+	function discordChannels(item: Workspace): DiscordChannel[] {
 		return item.discord_guild_id ? channelsByGuild[item.discord_guild_id] || [] : [];
-    }
+	}
 
-    function setSsnTargets(item: Workspace, value: string): void {
-        item.ssn_targets = [
-            ...new Set(
-                value
-                    .split(',')
-                    .map((target) => target.trim().toLowerCase())
-                    .filter(Boolean)
-            )
-        ];
-    }
+	function setSsnTargets(item: Workspace, value: string): void {
+		item.ssn_targets = [
+			...new Set(
+				value
+					.split(',')
+					.map((target) => target.trim().toLowerCase())
+					.filter(Boolean)
+			)
+		];
+	}
 
-    function auth(provider: string, mode = 'login'): void {
-        const returnTo = `${location.origin}${base}/dashboard`;
+	function auth(provider: string, mode = 'login'): void {
+		const returnTo = `${location.origin}${base}/dashboard`;
 
-        location.href =
-            `${api}/dashboard/auth/${provider}` +
-            `?mode=${mode}` +
-            `&return_to=${encodeURIComponent(returnTo)}`;
-    }
+		location.href =
+			`${api}/dashboard/auth/${provider}` +
+			`?mode=${mode}` +
+			`&return_to=${encodeURIComponent(returnTo)}`;
+	}
 
-    async function disconnect(provider: string): Promise<void> {
-        const name = providerName(provider);
-        if (
-            !confirm(
-                `Disconnect ${name} from StreamBridge? Its saved authorization and direct relay assignment will be removed.`
-            )
-        ) {
-            return;
-        }
+	async function disconnect(provider: string): Promise<void> {
+		const name = providerName(provider);
+		if (
+			!confirm(
+				`Disconnect ${name} from StreamBridge? Its saved authorization and direct relay assignment will be removed.`
+			)
+		) {
+			return;
+		}
 
-        accountMessage = '';
-        accountError = '';
-        disconnectingProvider = provider;
+		accountMessage = '';
+		accountError = '';
+		disconnectingProvider = provider;
 
-        try {
-            await request(`/dashboard/api/identities/${provider}`, {
-                method: 'DELETE'
-            });
-            await load();
-            accountMessage = `${name} disconnected`;
-        } catch (caughtError) {
-            accountError =
-                caughtError instanceof Error ? caughtError.message : `Could not disconnect ${name}`;
-        } finally {
-            disconnectingProvider = '';
-        }
-    }
+		try {
+			await request(`/dashboard/api/identities/${provider}`, {
+				method: 'DELETE'
+			});
+			await load();
+			accountMessage = `${name} disconnected`;
+		} catch (caughtError) {
+			accountError =
+				caughtError instanceof Error ? caughtError.message : `Could not disconnect ${name}`;
+		} finally {
+			disconnectingProvider = '';
+		}
+	}
 
-    async function save(item: Workspace): Promise<void> {
-        saved = '';
-        saveError = '';
-        saveTarget = item;
+	async function save(item: Workspace): Promise<void> {
+		saved = '';
+		saveError = '';
+		saveTarget = item;
 
-        try {
-            if (!item.id) {
-                throw new Error('Your bridge has not finished loading');
-            }
+		try {
+			if (!item.id) {
+				throw new Error('Your bridge has not finished loading');
+			}
 
-            await request(`/dashboard/api/workspaces/${item.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify(item)
-            });
+			await request(`/dashboard/api/workspaces/${item.id}`, {
+				method: 'PATCH',
+				body: JSON.stringify(item)
+			});
 
 			saved = 'Bridge saved';
-        } catch (caughtError) {
+		} catch (caughtError) {
 			saveError = caughtError instanceof Error ? caughtError.message : 'Could not save workspace';
-        }
-    }
+		}
+	}
 
-    function setConnection(
-        item: Workspace,
-        provider: string,
-        identity: Identity,
-        enabled: boolean
-    ): void {
+	function setConnection(
+		item: Workspace,
+		provider: string,
+		identity: Identity,
+		enabled: boolean
+	): void {
 		const existing = item.connections.find((connection) => connection.provider === provider);
 
-        item.connections = [
+		item.connections = [
 			...item.connections.filter((connection) => connection.provider !== provider),
-            {
-                provider,
-                provider_user_id: identity.provider_user_id,
-                enabled,
-                settings: existing?.settings || {}
-            }
-        ];
-    }
+			{
+				provider,
+				provider_user_id: identity.provider_user_id,
+				enabled,
+				settings: existing?.settings || {}
+			}
+		];
+	}
 
-    async function logout(): Promise<void> {
-        await request('/dashboard/api/logout', {
-            method: 'POST'
-        });
+	async function logout(): Promise<void> {
+		await request('/dashboard/api/logout', {
+			method: 'POST'
+		});
 
-        me = {
-            authenticated: false,
-            identities: []
-        };
+		me = {
+			authenticated: false,
+			identities: []
+		};
 
-        workspaces = [];
-    }
+		workspaces = [];
+	}
 
-    onMount(() => {
-        load();
-    });
+	onMount(() => {
+		load();
+	});
 </script>
 
 <svelte:head>
-    <title>Dashboard — StreamBridge</title>
+	<title>Dashboard — StreamBridge</title>
 </svelte:head>
 
 <div class="page">
-    <div class="page-title">
-        <div class="eyebrow">Control center</div>
+	<div class="page-title">
+		<div class="eyebrow">Control center</div>
 
-        <h1>StreamBridge dashboard</h1>
+		<h1>StreamBridge dashboard</h1>
 
-        <p class="muted">
+		<p class="muted">
 			Link the accounts you use, then create a bridge for a Discord server or a standalone stream.
-        </p>
-    </div>
+		</p>
+	</div>
 
-    {#if error}
-        <div class="notice error">
-            {error}
-        </div>
-    {/if}
+	{#if error}
+		<div class="notice error">
+			{error}
+		</div>
+	{/if}
 
-    {#if loading && !error}
+	{#if loading && !error}
 		<div class="panel">Loading your bridge…</div>
-    {:else if !me.authenticated}
-        <section class="panel">
-            <h2>Sign in to continue</h2>
+	{:else if !me.authenticated}
+		<section class="panel">
+			<h2>Sign in to continue</h2>
 
-            <p class="muted">
+			<p class="muted">
 				These providers only establish who you are. StreamBridge never receives your password.
-            </p>
+			</p>
 
-            <div class="card-grid">
-                {#each providers as provider}
+			<div class="card-grid">
+				{#each providers as provider (provider)}
 					<button class="button secondary" onclick={() => auth(provider)}>
-                        Continue with {providerName(provider)}
-                    </button>
-                {/each}
-            </div>
-        </section>
-    {:else}
-        <section>
-            <div class="workspace-header">
-                <div>
-                    <h2>Linked accounts</h2>
+						Continue with {providerName(provider)}
+					</button>
+				{/each}
+			</div>
+		</section>
+	{:else}
+		<section>
+			<div class="workspace-header">
+				<div>
+					<h2>Linked accounts</h2>
 
-                    <p class="muted">
+					<p class="muted">
 						Authorize each platform once. Linked accounts can sign you in and can be assigned to any
 						bridge you manage.
-                    </p>
-                </div>
+					</p>
+				</div>
 
 				<button class="button secondary small" onclick={logout}> Sign out </button>
-            </div>
+			</div>
 
-            <div class="card-grid">
-                {#each providers as provider}
-                    {@const identity = findIdentity(provider)}
+			<div class="card-grid">
+				{#each providers as provider (provider)}
+					{@const identity = findIdentity(provider)}
 
-                    <div class="panel account">
-                        {#if identity?.avatar_url}
+					<div class="panel account">
+						{#if identity?.avatar_url}
 							<img class="avatar" src={identity.avatar_url} alt="" />
-                        {:else}
-                            <div class="avatar"></div>
-                        {/if}
+						{:else}
+							<div class="avatar"></div>
+						{/if}
 
-                        <div>
-                            <strong>
-                                {providerName(provider)}
-                            </strong>
+						<div>
+							<strong>
+								{providerName(provider)}
+							</strong>
 
-                            <div class="muted">
-                                {identity?.display_name || 'Not linked'}
-                            </div>
-                        </div>
+							<div class="muted">
+								{identity?.display_name || 'Not linked'}
+							</div>
+						</div>
 
-                        <div class="account-actions">
-                            {#if !identity}
+						<div class="account-actions">
+							{#if !identity}
 								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
-                            {:else}
-                                <span aria-label="Linked">✓</span>
-                                <button
-                                    class="button secondary small"
-                                    type="button"
-                                    disabled={Boolean(disconnectingProvider)}
-                                    onclick={() => disconnect(provider)}
-                                >
-                                    {disconnectingProvider === provider ? 'Disconnecting…' : 'Disconnect'}
-                                </button>
-                            {/if}
-                        </div>
-                    </div>
-                {/each}
-            </div>
+							{:else}
+								<span aria-label="Linked">✓</span>
+								<button
+									class="button secondary small"
+									type="button"
+									disabled={Boolean(disconnectingProvider)}
+									onclick={() => disconnect(provider)}
+								>
+									{disconnectingProvider === provider ? 'Disconnecting…' : 'Disconnect'}
+								</button>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</div>
 
-            {#if accountMessage}
-                <div class="notice success" role="status">{accountMessage}</div>
-            {/if}
+			{#if accountMessage}
+				<div class="notice success" role="status">{accountMessage}</div>
+			{/if}
 
-            {#if accountError}
-                <div class="notice error" role="alert">{accountError}</div>
-            {/if}
-        </section>
+			{#if accountError}
+				<div class="notice error" role="alert">{accountError}</div>
+			{/if}
+		</section>
 
-        <section class="workspace">
-            <div class="workspace-header">
-                <div>
-                    <h2>Your bridge</h2>
+		<section class="workspace">
+			<div class="workspace-header">
+				<div>
+					<h2>Your bridge</h2>
 
-                    <p class="muted">
+					<p class="muted">
 						Configure chat relay for your connected streaming accounts, with or without Discord.
-                    </p>
-                </div>
-            </div>
+					</p>
+				</div>
+			</div>
 
-            {#each workspaces as item}
-                <form
-                    class="panel workspace"
-                    onsubmit={(event) => {
-                        event.preventDefault();
+			{#each workspaces as item (item.id)}
+				<form
+					class="panel workspace"
+					onsubmit={(event) => {
+						event.preventDefault();
 						const targetsInput = event.currentTarget.elements.namedItem('ssn_targets');
-                        if (targetsInput instanceof HTMLInputElement) {
-                            setSsnTargets(item, targetsInput.value);
-                        }
-                        save(item);
-                    }}
-                >
-                    <div class="workspace-header">
-                        <div>
+						if (targetsInput instanceof HTMLInputElement) {
+							setSsnTargets(item, targetsInput.value);
+						}
+						save(item);
+					}}
+				>
+					<div class="workspace-header">
+						<div>
 							<h2>Bridge status</h2>
 
-                            <div class="muted">
-                                SSN: {item.runtime_status.ssn} · Direct:
+							<div class="muted">
+								SSN: {item.runtime_status.ssn} · Direct:
 								{activeConnections(item)}
-                            </div>
-                        </div>
+							</div>
+						</div>
 
-                        <label class="check">
+						<label class="check">
 							<input type="checkbox" bind:checked={item.enabled} />
 
-                            Running
-                        </label>
-                    </div>
+							Running
+						</label>
+					</div>
 
 					<div class="configuration-sections">
 						<section class="configuration-section">
@@ -477,37 +483,37 @@
 							</div>
 
 							<div class="form-grid">
-                        <label class="full">
-                            Social Stream Ninja session ID
+								<label class="full">
+									Social Stream Ninja session ID
 
-                            <span class="muted">Optional</span>
+									<span class="muted">Optional</span>
 
-                            <input
-                                type="password"
-                                bind:value={item.ssn_session_id}
-                                autocomplete="off"
-                                spellcheck="false"
-                            />
+									<input
+										type="password"
+										bind:value={item.ssn_session_id}
+										autocomplete="off"
+										spellcheck="false"
+									/>
 
 									<span class="muted"> Leave blank and save to disconnect SSN. </span>
-                        </label>
+								</label>
 
-                        <label class="full">
-                            SSN platforms
+								<label class="full">
+									SSN platforms
 
-                            <input
-                                name="ssn_targets"
-                                value={item.ssn_targets.join(', ')}
+									<input
+										name="ssn_targets"
+										value={item.ssn_targets.join(', ')}
 										onblur={(event) => setSsnTargets(item, event.currentTarget.value)}
-                                placeholder="twitch, youtube, kick, tiktok, ..."
-                                spellcheck="false"
-                            />
+										placeholder="twitch, youtube, kick, tiktok, ..."
+										spellcheck="false"
+									/>
 
-                            <span class="muted">
+									<span class="muted">
 										Enter any SSN platform identifiers, separated by commas. This is not limited to
 										StreamBridge's direct platforms.
-                            </span>
-                        </label>
+									</span>
+								</label>
 							</div>
 						</section>
 
@@ -522,57 +528,57 @@
 							</div>
 
 							<div class="form-grid">
-                        <div class="full">
+								<div class="full">
 									<span class="field-label">Direct platform connections</span>
 
-                            <p class="muted">
+									<p class="muted">
 										Link an account above, then choose which accounts this bridge may use when SSN
 										is unavailable. Changes take effect when you press Save bridge.
-                            </p>
+									</p>
 
-                            <div class="checks">
-                                {#each directPlatforms as platform}
+									<div class="checks">
+										{#each directPlatforms as platform (platform)}
 											{@const identity = findIdentity(identityProvider(platform))}
 
 											{@const connected = item.connections.find(
 												(connection) => connection.provider === platform
-                                        )}
+											)}
 
-                                    <label class="check">
-                                        <input
-                                            type="checkbox"
-                                            disabled={!identity}
+											<label class="check">
+												<input
+													type="checkbox"
+													disabled={!identity}
 													checked={Boolean(connected?.enabled)}
-                                            onchange={(event) => {
-                                                if (identity) {
+													onchange={(event) => {
+														if (identity) {
 															setConnection(item, platform, identity, event.currentTarget.checked);
-                                                }
-                                            }}
-                                        />
+														}
+													}}
+												/>
 
-                                        {platformName(platform)}
+												{platformName(platform)}
 
-                                        {#if !identity}
-                                            (link first)
-                                        {/if}
-                                    </label>
-                                {/each}
+												{#if !identity}
+													(link first)
+												{/if}
+											</label>
+										{/each}
 
-                                <label class="check">
-                                    <input
-                                        type="checkbox"
-                                        disabled={!findIdentity('discord')}
-                                        bind:checked={item.discord_enabled}
-                                    />
+										<label class="check">
+											<input
+												type="checkbox"
+												disabled={!findIdentity('discord')}
+												bind:checked={item.discord_enabled}
+											/>
 
-                                    Discord
+											Discord
 
-                                    {#if !findIdentity('discord')}
-                                        (link first)
-                                    {/if}
-                                </label>
-                            </div>
-                        </div>
+											{#if !findIdentity('discord')}
+												(link first)
+											{/if}
+										</label>
+									</div>
+								</div>
 
 								<label class="full">
 									Direct relay message
@@ -585,94 +591,94 @@
 									</span>
 								</label>
 
-                        {#if item.discord_enabled}
-                            <label>
-                                Discord server
+								{#if item.discord_enabled}
+									<label>
+										Discord server
 
-                                <select
-                                    required
-                                    value={item.discord_guild_id || ''}
-                                    onchange={(event) => {
+										<select
+											required
+											value={item.discord_guild_id || ''}
+											onchange={(event) => {
 												item.discord_guild_id = event.currentTarget.value || null;
-                                        item.discord_channel_id = null;
-                                        if (item.discord_guild_id) {
+												item.discord_channel_id = null;
+												if (item.discord_guild_id) {
 													loadDiscordChannels(item.discord_guild_id);
-                                        }
-                                    }}
-                                >
+												}
+											}}
+										>
 											<option value=""> Select a Discord server </option>
 
-                                    {#each discordGuilds as guild}
-                                        <option value={guild.id}>
-                                            {guild.name}
-                                        </option>
-                                    {/each}
-                                </select>
-                            </label>
+											{#each discordGuilds as guild (guild.id)}
+												<option value={guild.id}>
+													{guild.name}
+												</option>
+											{/each}
+										</select>
+									</label>
 
-                            {#if item.discord_guild_id}
-                                <label>
-                                    Discord relay channel
+									{#if item.discord_guild_id}
+										<label>
+											Discord relay channel
 
 											<select bind:value={item.discord_channel_id} required>
 												<option value=""> Select a channel </option>
 
-                                        {#each discordChannels(item) as channel}
-                                            <option value={channel.id}>
-                                                #{channel.name} ({channel.type})
-                                            </option>
-                                        {/each}
-                                    </select>
+												{#each discordChannels(item) as channel (channel.id)}
+													<option value={channel.id}>
+														#{channel.name} ({channel.type})
+													</option>
+												{/each}
+											</select>
 
-                                    <span class="muted">
+											<span class="muted">
 												The same text channel or voice-channel side chat is used in both directions.
-                                    </span>
-                                </label>
+											</span>
+										</label>
 
-                                <div class="checks full">
-                                    <label class="check">
+										<div class="checks full">
+											<label class="check">
 												<input type="checkbox" bind:checked={item.discord_forward_enabled} />
 
-                                        Forward messages from Discord
-                                    </label>
+												Forward messages from Discord
+											</label>
 
-                                    <label class="check">
+											<label class="check">
 												<input type="checkbox" bind:checked={item.discord_receive_enabled} />
 
-                                        Forward messages to Discord
-                                    </label>
-                                </div>
-                            {/if}
+												Forward messages to Discord
+											</label>
+										</div>
+									{/if}
 
-                            <label class="check full">
+									<label class="check full">
 										<input type="checkbox" bind:checked={item.transport_announcements} />
 
 										Announce switches between SSN and direct relay in configured Discord channels
-                            </label>
-                        {/if}
-                    </div>
+									</label>
+								{/if}
+							</div>
 						</section>
 					</div>
 
-                    <div class="workspace-actions">
+					<div class="workspace-actions">
 						<button class="button" type="submit"> Save bridge </button>
-                    </div>
+					</div>
 
-                    {#if saveTarget === item && saveError}
-                        <div class="notice error">
-                            {saveError}
-                        </div>
-                    {/if}
+					{#if saveTarget === item && saveError}
+						<div class="notice error">
+							{saveError}
+						</div>
+					{/if}
 
-                    {#if saveTarget === item && saved}
-                        <div class="notice">
-                            {saved}
-                        </div>
-                    {/if}
-                </form>
-            {/each}
-        </section>
-    {/if}
+					{#if saveTarget === item && saved}
+						<div class="notice">
+							{saved}
+						</div>
+					{/if}
+				</form>
+			{/each}
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -701,16 +707,16 @@
 		margin-bottom: 0;
 	}
 
-    .workspace-actions {
-        display: flex;
-        justify-content: flex-start;
-        gap: 12px;
-        margin-top: 22px;
-    }
-    
-    .field-label {
-        color: #cfd0d6;
-        font-size: 13px;
-        font-weight: 600;
-    }
+	.workspace-actions {
+		display: flex;
+		justify-content: flex-start;
+		gap: 12px;
+		margin-top: 22px;
+	}
+
+	.field-label {
+		color: #cfd0d6;
+		font-size: 13px;
+		font-weight: 600;
+	}
 </style>

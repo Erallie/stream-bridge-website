@@ -1,5 +1,5 @@
 # StreamBridge Privacy Policy
-  
+
 **Last updated:** August 18, 2026
 
 This Privacy Policy explains how StreamBridge (“StreamBridge,” “we,” “us,” or “the Bot”), operated by **Gozar Productions LLC**, accesses, processes, stores, shares, and deletes information when it is added to a Discord server or connected to Twitch, YouTube, Kick, or Social Stream Ninja.
@@ -444,5 +444,5 @@ The updated policy will show a new “Last updated” date. If a change material
 
 For privacy questions, requests, or complaints:
 
-**Operator:** Gozar Productions LLC 
+**Operator:** Gozar Productions LLC
 **Email:** contact@gozarproductions.com

@@ -348,5 +348,5 @@ These Terms, together with the StreamBridge Privacy Policy and any applicable wr
 
 Questions about these Terms may be sent to:
 
-**Operator:** Gozar Productions LLC 
+**Operator:** Gozar Productions LLC
 **Email:** contact@gozarproductions.com
