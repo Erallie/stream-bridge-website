@@ -347,7 +347,7 @@
 
 <svelte:head>
 	<title>Dashboard — StreamBridge</title>
-    <link rel="canonical" href="https://streambridge.gozarproductions.com/dashboard" />
+    <link rel="canonical" href="https://streambridge.gozarproductions.com/dashboard/" />
 </svelte:head>
 
 <div class="page">

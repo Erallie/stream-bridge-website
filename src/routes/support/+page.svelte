@@ -4,7 +4,7 @@
 		name="description"
 		content="Report StreamBridge bugs, request features, or get help from the community."
 	/>
-    <link rel="canonical" href="https://streambridge.gozarproductions.com/support" />
+    <link rel="canonical" href="https://streambridge.gozarproductions.com/support/" />
 </svelte:head>
 
 <div class="page">

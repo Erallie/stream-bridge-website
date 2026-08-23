@@ -8,7 +8,7 @@
 <svelte:head>
 	<title>Privacy Policy — StreamBridge</title>
 	<meta name="description" content="StreamBridge privacy policy" />
-    <link rel="canonical" href="https://streambridge.gozarproductions.com/privacy" />
+    <link rel="canonical" href="https://streambridge.gozarproductions.com/privacy/" />
 </svelte:head>
 
 <article class="page legal">
