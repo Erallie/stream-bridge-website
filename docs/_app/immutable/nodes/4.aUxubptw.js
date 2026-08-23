@@ -1,5 +1,5 @@
-import{$ as e,C as t,P as n,R as r,T as i,X as a,Y as o,h as s,v as c}from"../chunks/CcU_q1iF.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Privacy Policy\r
-  \r
+import{J as e,L as t,N as n,Q as r,S as i,Y as a,h as o,v as s,w as c}from"../chunks/LHrFHH2h.js";import"../chunks/xihTtKlq.js";import{t as l}from"../chunks/B6Znjcr-.js";var u=`# StreamBridge Privacy Policy\r
+\r
 **Last updated:** August 18, 2026\r
 \r
 This Privacy Policy explains how StreamBridge (“StreamBridge,” “we,” “us,” or “the Bot”), operated by **Gozar Productions LLC**, accesses, processes, stores, shares, and deletes information when it is added to a Discord server or connected to Twitch, YouTube, Kick, or Social Stream Ninja.\r
@@ -444,6 +444,6 @@ The updated policy will show a new “Last updated” date. If a change material
 \r
 For privacy questions, requests, or complaints:\r
 \r
-**Operator:** Gozar Productions LLC \r
+**Operator:** Gozar Productions LLC\r
 **Email:** contact@gozarproductions.com\r
-`,d=i(`<meta name="description" content="StreamBridge privacy policy"/>`),f=i(`<article class="page legal"></article>`);function p(i,p){a(p,!0);let m=l(u);var h=f();s(`7ke6fz`,e=>{var i=d();n(()=>{r.title=`Privacy Policy — StreamBridge`}),t(e,i)}),c(h,()=>m,!0),e(h),t(i,h),o()}export{p as component};
+`,d=c(`<meta name="description" content="StreamBridge privacy policy"/>`),f=c(`<article class="page legal"></article>`);function p(c,p){a(p,!0);let m=l(u);var h=f();o(`7ke6fz`,e=>{var r=d();n(()=>{t.title=`Privacy Policy — StreamBridge`}),i(e,r)}),s(h,()=>m,!0),r(h),i(c,h),e()}export{p as component};
