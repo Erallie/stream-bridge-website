@@ -493,7 +493,7 @@
 
 							<div class="form-grid">
                         <div class="full">
-									<strong> Direct platform connections </strong>
+									<span class="field-label">Direct platform connections</span>
 
                             <p class="muted">
 										Link an account above, then choose which accounts this bridge may use when SSN
@@ -676,5 +676,11 @@
         justify-content: flex-start;
         gap: 12px;
         margin-top: 22px;
+    }
+    
+    .field-label {
+        color: #cfd0d6;
+        font-size: 13px;
+        font-weight: 600;
     }
 </style>
