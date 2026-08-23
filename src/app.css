@@ -530,6 +530,7 @@ textarea:focus {
 	min-width: 0;
 	max-width: 100%;
 	flex: 1 1 auto;
+	overflow: hidden;
 }
 
 .account > div:not(.account-actions) strong,
@@ -553,6 +554,16 @@ textarea:focus {
 	padding: 9px;
 	object-fit: contain;
 	overflow: visible;
+}
+
+@supports (-webkit-touch-callout: none) {
+	.account,
+	.account > .avatar,
+	.provider-logo {
+		overflow: visible !important;
+		clip-path: none !important;
+		-webkit-clip-path: none !important;
+	}
 }
 
 .account-actions {
