@@ -62,6 +62,9 @@
     let saved = $state('');
     let saveError = $state('');
     let saveTarget = $state<Workspace | null>(null);
+    let accountMessage = $state('');
+    let accountError = $state('');
+    let disconnectingProvider = $state('');
 
     let me = $state<AccountState>({
         authenticated: false,
@@ -233,6 +236,34 @@
             `&return_to=${encodeURIComponent(returnTo)}`;
     }
 
+    async function disconnect(provider: string): Promise<void> {
+        const name = providerName(provider);
+        if (
+            !confirm(
+                `Disconnect ${name} from StreamBridge? Its saved authorization and direct relay assignment will be removed.`
+            )
+        ) {
+            return;
+        }
+
+        accountMessage = '';
+        accountError = '';
+        disconnectingProvider = provider;
+
+        try {
+            await request(`/dashboard/api/identities/${provider}`, {
+                method: 'DELETE'
+            });
+            await load();
+            accountMessage = `${name} disconnected`;
+        } catch (caughtError) {
+            accountError =
+                caughtError instanceof Error ? caughtError.message : `Could not disconnect ${name}`;
+        } finally {
+            disconnectingProvider = '';
+        }
+    }
+
     async function save(item: Workspace): Promise<void> {
         saved = '';
         saveError = '';
@@ -371,11 +402,27 @@
 								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
                             {:else}
                                 <span aria-label="Linked">✓</span>
+                                <button
+                                    class="button secondary small"
+                                    type="button"
+                                    disabled={Boolean(disconnectingProvider)}
+                                    onclick={() => disconnect(provider)}
+                                >
+                                    {disconnectingProvider === provider ? 'Disconnecting…' : 'Disconnect'}
+                                </button>
                             {/if}
                         </div>
                     </div>
                 {/each}
             </div>
+
+            {#if accountMessage}
+                <div class="notice success" role="status">{accountMessage}</div>
+            {/if}
+
+            {#if accountError}
+                <div class="notice error" role="alert">{accountError}</div>
+            {/if}
         </section>
 
         <section class="workspace">
