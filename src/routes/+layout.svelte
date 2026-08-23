@@ -23,7 +23,7 @@
 			target="_blank"
 			rel="noreferrer"
 		>
-			README
+			Documentation
 		</a>
 		<a href={resolve('/support')}>Support</a>
 		<a href={resolve('/privacy')}>Privacy</a>
