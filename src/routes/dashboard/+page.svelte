@@ -513,8 +513,7 @@
 								<h3>Social Stream Ninja Connection</h3>
 
 								<p class="muted">
-									Connect this bridge to Social Stream Ninja and choose which SSN platforms receive
-									relayed messages.
+									Connect this bridge to Social Stream Ninja to include additional streaming platforms and let SSN handle their relay while the session is available.
 								</p>
 							</div>
 
@@ -558,7 +557,7 @@
 								</div>
 
 								<label class="full">
-									SSN platforms
+									Platforms handled through SSN
 
 									<input
 										name="ssn_targets"
@@ -569,8 +568,7 @@
 									/>
 
 									<span class="muted">
-										Enter any SSN platform identifiers, separated by commas. This is not limited to
-										StreamBridge's direct platforms. See the
+										Enter platforms routed through SSN, separated by commas. This also helps prevent duplicate reflections. Do not add <code>discord</code>; StreamBridge handles it separately. See the
                                         <a
                                             href="https://socialstream.ninja/docs/supported-sites.html"
                                             target="_blank"

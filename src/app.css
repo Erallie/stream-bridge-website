@@ -349,6 +349,15 @@ footer {
 	color: #a8beff;
 }
 
+.muted code {
+	padding: 1px 5px;
+	color: #d8dae2;
+	background: #242730;
+	border: 1px solid #353944;
+	border-radius: 4px;
+	font-size: 0.9em;
+}
+
 .panel {
 	padding: 24px;
 	background: var(--panel);
