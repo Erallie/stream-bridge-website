@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
+	import googleG from '$lib/assets/google-g.png';
 
 	type Identity = {
 		provider: string;
@@ -59,7 +60,7 @@
 	const discordInviteUrl = 'https://discord.com/oauth2/authorize?client_id=1538972596165419069';
 	const providerLogos: Record<string, string> = {
 		discord: 'https://cdn.simpleicons.org/discord/5865F2',
-		google: 'https://cdn.simpleicons.org/google',
+		google: googleG,
 		twitch: 'https://cdn.simpleicons.org/twitch/9146FF',
 		kick: 'https://cdn.simpleicons.org/kick/53FC18'
 	};
@@ -379,7 +380,15 @@
 
 			<div class="card-grid">
 				{#each providers as provider (provider)}
-					<button class="button secondary" onclick={() => auth(provider)}>
+					<button
+						class="button secondary"
+						class:google-auth-button={provider === 'google'}
+						onclick={() => auth(provider)}
+					>
+						{#if provider === 'google'}
+							<img src={googleG} alt="" aria-hidden="true" />
+						{/if}
+
 						Continue with {providerName(provider)}
 					</button>
 				{/each}
@@ -430,7 +439,17 @@
 
 						<div class="account-actions">
 							{#if !identity}
-								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
+								<button
+									class="button small"
+									class:google-auth-button={provider === 'google'}
+									onclick={() => auth(provider, 'link')}
+								>
+									{#if provider === 'google'}
+										<img src={googleG} alt="" aria-hidden="true" />
+									{/if}
+
+									Link
+								</button>
 							{:else}
 								<span aria-label="Linked">✓</span>
 								<button
