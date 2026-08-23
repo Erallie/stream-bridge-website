@@ -298,6 +298,11 @@
 			});
 
 			saved = 'Bridge saved';
+            setTimeout(() => {
+                if (saved === 'Bridge saved.') {
+                    saved = '';
+                }
+            }, 15000);
 		} catch (caughtError) {
 			saveError = caughtError instanceof Error ? caughtError.message : 'Could not save workspace';
 		}
