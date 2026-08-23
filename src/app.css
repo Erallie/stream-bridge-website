@@ -553,7 +553,7 @@ textarea:focus {
 .provider-logo {
 	padding: 9px;
 	object-fit: contain;
-	overflow: visible !important;
+	border-radius: 0;
 }
 
 .account-actions {
