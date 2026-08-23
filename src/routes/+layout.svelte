@@ -18,6 +18,13 @@
 	</a>
 	<nav aria-label="Main navigation">
 		<a href={resolve('/#features')}>Features</a>
+		<a
+			href="https://github.com/Erallie/stream-bridge/blob/main/README.md"
+			target="_blank"
+			rel="noreferrer"
+		>
+			README
+		</a>
 		<a href={resolve('/support')}>Support</a>
 		<a href={resolve('/privacy')}>Privacy</a>
 		<a href={resolve('/terms')}>Terms</a>
