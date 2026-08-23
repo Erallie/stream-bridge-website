@@ -299,7 +299,7 @@
 
 			saved = 'Bridge saved';
             setTimeout(() => {
-                if (saved === 'Bridge saved.') {
+                if (saved === 'Bridge saved') {
                     saved = '';
                 }
             }, 10000);
