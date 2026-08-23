@@ -553,17 +553,7 @@ textarea:focus {
 .provider-logo {
 	padding: 9px;
 	object-fit: contain;
-	overflow: visible;
-}
-
-@supports (-webkit-touch-callout: none) {
-	.account,
-	.account > .avatar,
-	.provider-logo {
-		overflow: visible !important;
-		clip-path: none !important;
-		-webkit-clip-path: none !important;
-	}
+	overflow: visible !important;
 }
 
 .account-actions {
