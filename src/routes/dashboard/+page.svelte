@@ -380,15 +380,7 @@
 
 			<div class="card-grid">
 				{#each providers as provider (provider)}
-					<button
-						class="button secondary"
-						class:google-auth-button={provider === 'google'}
-						onclick={() => auth(provider)}
-					>
-						{#if provider === 'google'}
-							<img src={googleG} alt="" aria-hidden="true" />
-						{/if}
-
+					<button class="button secondary" onclick={() => auth(provider)}>
 						Continue with {providerName(provider)}
 					</button>
 				{/each}
@@ -439,17 +431,7 @@
 
 						<div class="account-actions">
 							{#if !identity}
-								<button
-									class="button small"
-									class:google-auth-button={provider === 'google'}
-									onclick={() => auth(provider, 'link')}
-								>
-									{#if provider === 'google'}
-										<img src={googleG} alt="" aria-hidden="true" />
-									{/if}
-
-									Link
-								</button>
+								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
 							{:else}
 								<span aria-label="Linked">✓</span>
 								<button
