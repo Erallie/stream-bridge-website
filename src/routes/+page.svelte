@@ -9,7 +9,7 @@
 		name="description"
 		content="Relay livestream chat between Discord, Twitch, YouTube, Kick, and Social Stream Ninja."
 	/>
-    <link rel="canonical" href="https://streambridge.gozarproductions.com/" />
+    <link rel="canonical" href="https://streambridge.gozarproductions.com" />
     </svelte:head
 >
 <section class="hero">
