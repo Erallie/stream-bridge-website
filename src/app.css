@@ -591,22 +591,23 @@ textarea:focus {
 
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
 
 .sign-in-options {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin-top: 24px;
 }
 
 @media (max-width: 900px) {
-    .card-grid {
+    .sign-in-options {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 520px) {
-    .card-grid {
+    .sign-in-options {
         grid-template-columns: 1fr;
     }
 }
@@ -764,6 +765,7 @@ textarea:focus {
 	}
 
 	.feature-grid,
+    .card-grid:not(.sign-in-options),
 	.support-grid {
 		grid-template-columns: 1fr;
 	}
