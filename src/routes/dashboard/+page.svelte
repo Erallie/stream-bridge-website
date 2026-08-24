@@ -386,7 +386,7 @@
 				relaying. StreamBridge never receives your password.
 			</p>
 
-			<div class="card-grid">
+			<div class="card-grid sign-in-options">
 				{#each providers as provider (provider)}
 					<button
 						class="provider-auth-button provider-{providerName(provider).toLowerCase()}"
