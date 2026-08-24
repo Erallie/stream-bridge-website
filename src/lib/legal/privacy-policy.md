@@ -386,21 +386,23 @@ Discord server administrators can limit StreamBridge’s access by:
 - Enabling or disabling a linked direct connection with `/direct enable`, `/direct disable`, or the dashboard
 - Removing StreamBridge from the Discord server
 
-Dashboard users can disconnect a linked identity with the **Disconnect** button. Disconnecting deletes StreamBridge’s stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. Disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. To avoid locking a user out, StreamBridge requires another sign-in identity to be linked before the final identity can be disconnected.
+Dashboard users can disconnect a linked identity with the **Disconnect** button. StreamBridge first requests revocation of the associated OAuth authorization from Discord, Google/YouTube, Twitch, or Kick. After the provider confirms revocation or reports that the token is already invalid, StreamBridge deletes its stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. If revocation cannot be confirmed, StreamBridge retains the connection and reports an error so the user can retry.
 
-Disabling a platform connection without disconnecting its identity does not delete the identity or revoke the platform grant. Disconnecting an identity from StreamBridge also does not necessarily revoke the authorization at the provider; users should revoke it through the provider’s account settings when desired.
+Disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. It does not remove the separately installed Discord bot from a server. To avoid locking a user out, StreamBridge requires another sign-in identity to be linked before the final identity can be disconnected.
+
+Disabling a platform connection without disconnecting its identity does not delete the identity or revoke the platform grant. Users may also review or revoke StreamBridge through the provider’s account settings.
 
 ### Revoke Google or YouTube access
 
-Users can review or revoke StreamBridge’s Google authorization from their [Google Account connections page](https://myaccount.google.com/connections).
+The dashboard’s **Disconnect** button requests revocation of StreamBridge’s Google OAuth grant and then deletes the locally stored Google/YouTube identity and credentials. Users can also review or revoke StreamBridge’s authorization from their [Google Account connections page](https://myaccount.google.com/connections).
 
 ### Revoke Kick access
 
-Users may revoke access through Kick’s account or connected-application settings when available. They may also contact **contact@gozarproductions.com** for assistance deleting StreamBridge’s stored Kick authorization.
+The dashboard’s **Disconnect** button requests revocation of StreamBridge’s Kick OAuth tokens and then deletes the locally stored Kick identity and credentials. Users may also revoke access through Kick’s account or connected-application settings when available.
 
 ### Revoke Discord or Twitch access
 
-Users may revoke StreamBridge through Discord’s or Twitch’s authorized-application settings. They may also use the dashboard’s **Disconnect** button to delete StreamBridge’s locally stored identity and authorization credentials, subject to the requirement to retain at least one sign-in method.
+The dashboard’s **Disconnect** button requests revocation of the Discord or Twitch OAuth authorization and then deletes StreamBridge’s locally stored identity and credentials, subject to the requirement to retain at least one sign-in method. Users may also revoke StreamBridge through Discord’s or Twitch’s authorized-application settings.
 
 ### Request deletion
 
