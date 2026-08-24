@@ -244,7 +244,7 @@ A dashboard user or server administrator may stop using StreamBridge at any time
 - Revoking third-party authorizations\r
 - Removing StreamBridge from the Discord server\r
 \r
-Removing the Bot or disconnecting an identity from StreamBridge does not necessarily revoke permissions granted through Discord, Google/YouTube, Twitch, or Kick. Those grants should also be revoked through the relevant account settings.\r
+Disconnecting a linked identity requests revocation of StreamBridge’s OAuth authorization from the applicable provider and deletes the locally stored identity and credentials after revocation is confirmed. Disconnecting the final linked identity permanently deletes the StreamBridge account and its related saved data, including sessions, bridge settings, platform assignments, Discord relay configuration, and stored relay history. Removing the Discord Bot from a server is separate from revoking the signed-in Discord user’s OAuth grant. Users may also revoke StreamBridge through the relevant platform’s account settings.\r
 \r
 For deletion of stored server configuration, contact **contact@gozarproductions.com**.\r
 \r
