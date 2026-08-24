@@ -452,7 +452,7 @@
 						<div class="account-actions">
 							{#if !identity}
 								<button
-									class="provider-auth-button provider-{providerName(provider).toLowerCase()} compact"
+									class="button small"
 									type="button"
 									aria-label={`Link ${providerName(provider)}`}
 									onclick={() => auth(provider, 'link')}
