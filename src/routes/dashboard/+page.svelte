@@ -95,9 +95,8 @@
 		return provider[0].toUpperCase() + provider.slice(1);
 	}
 
-	function providerAction(provider: string, linking = false): string {
-		const name = providerName(provider);
-		return linking ? `Link ${name}` : `Continue with ${name}`;
+	function providerAction(provider: string): string {
+		return `Continue with ${providerName(provider)}`;
 	}
 
 	function providerLogo(provider: string): string {
@@ -428,7 +427,7 @@
 							<button
 								class="avatar provider-logo-container"
 								type="button"
-								aria-label={providerAction(provider, true)}
+								aria-label={`Link ${providerName(provider)}`}
 								onclick={() => auth(provider, 'link')}
 							>
                                 <img
@@ -455,12 +454,10 @@
 								<button
 									class="provider-auth-button provider-{providerName(provider).toLowerCase()} compact"
 									type="button"
+									aria-label={`Link ${providerName(provider)}`}
 									onclick={() => auth(provider, 'link')}
 								>
-									<span class="provider-auth-logo" aria-hidden="true">
-										<img src={providerLogo(provider)} alt="" />
-									</span>
-									<span>{providerAction(provider, true)}</span>
+									<span>Link</span>
 								</button>
 							{:else}
 								<span aria-label="Linked">✓</span>
