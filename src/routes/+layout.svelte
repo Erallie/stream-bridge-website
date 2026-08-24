@@ -5,7 +5,34 @@
 	import '../app.css';
 
 	let { children } = $props();
+	let mobileMenuOpen = $state(false);
+
+	function closeMobileMenu() {
+		mobileMenuOpen = false;
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') {
+			closeMobileMenu();
+		}
+	}
+
+	$effect(() => {
+		if (!mobileMenuOpen) return;
+
+		const bodyOverflow = document.body.style.overflow;
+		const htmlOverflow = document.documentElement.style.overflow;
+		document.body.style.overflow = 'hidden';
+		document.documentElement.style.overflow = 'hidden';
+
+		return () => {
+			document.body.style.overflow = bodyOverflow;
+			document.documentElement.style.overflow = htmlOverflow;
+		};
+	});
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
@@ -16,13 +43,9 @@
 		<img class="brand-logo" src={logo} alt="" />
 		StreamBridge
 	</a>
-	<nav aria-label="Main navigation">
+	<nav class="desktop-nav" aria-label="Main navigation">
 		<a href={resolve('/#features')}>Features</a>
-		<a
-			href="https://github.com/Erallie/stream-bridge#readme"
-			target="_blank"
-			rel="noreferrer"
-		>
+		<a href="https://github.com/Erallie/stream-bridge#readme" target="_blank" rel="noreferrer">
 			Documentation
 		</a>
 		<a href={resolve('/support')}>Support</a>
@@ -30,7 +53,50 @@
 		<a href={resolve('/terms')}>Terms</a>
 		<a class="button small" href={resolve('/dashboard')}>Dashboard</a>
 	</nav>
+	<button
+		class="mobile-menu-button"
+		type="button"
+		aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+		aria-expanded={mobileMenuOpen}
+		aria-controls="mobile-navigation"
+		onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
+	>
+		<span class:open={mobileMenuOpen}></span>
+		<span class:open={mobileMenuOpen}></span>
+		<span class:open={mobileMenuOpen}></span>
+	</button>
 </header>
+{#if mobileMenuOpen}
+	<button
+		class="mobile-menu-backdrop"
+		type="button"
+		aria-label="Close navigation menu"
+		onclick={closeMobileMenu}
+	></button>
+	<nav id="mobile-navigation" class="mobile-nav" aria-label="Mobile navigation">
+		<div class="mobile-nav-links">
+			<a href={resolve('/#features')} onclick={closeMobileMenu}>Features</a>
+			<a
+				href="https://github.com/Erallie/stream-bridge#readme"
+				target="_blank"
+				rel="noreferrer"
+				onclick={closeMobileMenu}
+			>
+				Documentation
+			</a>
+			<a href={resolve('/support')} onclick={closeMobileMenu}>Support</a>
+			<a href={resolve('/privacy')} onclick={closeMobileMenu}>Privacy</a>
+			<a href={resolve('/terms')} onclick={closeMobileMenu}>Terms</a>
+		</div>
+		<a
+			class="button mobile-dashboard-button"
+			href={resolve('/dashboard')}
+			onclick={closeMobileMenu}
+		>
+			Dashboard
+		</a>
+	</nav>
+{/if}
 <main>{@render children()}</main>
 <footer>
 	<div class="footer-brand">
