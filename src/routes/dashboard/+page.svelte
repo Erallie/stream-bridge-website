@@ -264,10 +264,12 @@
 
 	async function disconnect(provider: string): Promise<void> {
 		const name = providerName(provider);
+		const deletingAccount = me.identities.length === 1;
+		const warning = deletingAccount
+			? `Disconnect ${name} and permanently delete your StreamBridge account? All saved bridge settings, connections, credentials, sessions, and relay history will be deleted.`
+			: `Disconnect ${name} from StreamBridge? Its authorization and direct relay assignment will be removed.`;
 		if (
-			!confirm(
-				`Disconnect ${name} from StreamBridge? Its saved authorization and direct relay assignment will be removed.`
-			)
+			!confirm(warning)
 		) {
 			return;
 		}
@@ -277,11 +279,13 @@
 		disconnectingProvider = provider;
 
 		try {
-			await request(`/dashboard/api/identities/${provider}`, {
+			const result = await request<{ account_deleted?: boolean }>(`/dashboard/api/identities/${provider}`, {
 				method: 'DELETE'
 			});
 			await load();
-			accountMessage = `${name} disconnected`;
+			accountMessage = result.account_deleted
+				? 'Your StreamBridge account and all saved data were deleted'
+				: `${name} disconnected`;
 		} catch (caughtError) {
 			accountError =
 				caughtError instanceof Error ? caughtError.message : `Could not disconnect ${name}`;

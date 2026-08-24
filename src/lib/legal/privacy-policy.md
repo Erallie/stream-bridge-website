@@ -386,9 +386,9 @@ Discord server administrators can limit StreamBridge’s access by:
 - Enabling or disabling a linked direct connection with `/direct enable`, `/direct disable`, or the dashboard
 - Removing StreamBridge from the Discord server
 
-Dashboard users can disconnect a linked identity with the **Disconnect** button. StreamBridge first requests revocation of the associated OAuth authorization from Discord, Google/YouTube, Twitch, or Kick. After the provider confirms revocation or reports that the token is already invalid, StreamBridge deletes its stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. If revocation cannot be confirmed, StreamBridge retains the connection and reports an error so the user can retry.
+Dashboard users can disconnect a linked identity with the **Disconnect** button. StreamBridge first requests revocation of the associated OAuth authorization from Discord, Google/YouTube, Twitch, or Kick. After the provider confirms revocation or reports that the token is already invalid, StreamBridge deletes its stored identity record and encrypted OAuth credentials and removes direct-relay assignments that depend on that identity. If revocation cannot be confirmed, StreamBridge retains the connection and reports an error so the user can retry. When another identity remains, disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. It does not remove the separately installed Discord bot from a server.
 
-Disconnecting Discord disables Discord relay for the bridge but preserves its selected server and channel configuration. It does not remove the separately installed Discord bot from a server. To avoid locking a user out, StreamBridge requires another sign-in identity to be linked before the final identity can be disconnected.
+Disconnecting the final linked identity permanently deletes the StreamBridge dashboard account and its related saved data, including linked identities and encrypted credentials, dashboard sessions, pending OAuth state, bridge settings, direct-platform assignments, Discord relay configuration, and stored delivery and duplicate-prevention history. The dashboard displays a specific confirmation warning before this deletion.
 
 Disabling a platform connection without disconnecting its identity does not delete the identity or revoke the platform grant. Users may also review or revoke StreamBridge through the provider’s account settings.
 
@@ -402,7 +402,7 @@ The dashboard’s **Disconnect** button requests revocation of StreamBridge’s 
 
 ### Revoke Discord or Twitch access
 
-The dashboard’s **Disconnect** button requests revocation of the Discord or Twitch OAuth authorization and then deletes StreamBridge’s locally stored identity and credentials, subject to the requirement to retain at least one sign-in method. Users may also revoke StreamBridge through Discord’s or Twitch’s authorized-application settings.
+The dashboard’s **Disconnect** button requests revocation of the Discord or Twitch OAuth authorization and then deletes StreamBridge’s locally stored identity and credentials. If it is the final linked identity, the StreamBridge account and its related saved data are also deleted. Users may also revoke StreamBridge through Discord’s or Twitch’s authorized-application settings.
 
 ### Request deletion
 
