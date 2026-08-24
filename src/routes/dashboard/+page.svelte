@@ -2,7 +2,10 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { PUBLIC_STREAMBRIDGE_API_URL } from '$env/static/public';
-	import googleG from '$lib/assets/google-g.png';
+	import discordLogo from '$lib/assets/discord.svg';
+	import kickLogo from '$lib/assets/kick.svg';
+	import twitchLogo from '$lib/assets/twitch-glitch.svg';
+	import youtubeLogo from '$lib/assets/youtube.png';
 
 	type Identity = {
 		provider: string;
@@ -59,10 +62,10 @@
 	const directPlatforms = ['twitch', 'kick', 'youtube'];
 	const discordInviteUrl = 'https://discord.com/oauth2/authorize?client_id=1538972596165419069';
 	const providerLogos: Record<string, string> = {
-		discord: 'https://cdn.simpleicons.org/discord/5865F2',
-		google: googleG,
-		twitch: 'https://cdn.simpleicons.org/twitch/9146FF',
-		kick: 'https://cdn.simpleicons.org/kick/53FC18'
+		discord: discordLogo,
+		google: youtubeLogo,
+		twitch: twitchLogo,
+		kick: kickLogo
 	};
 
 	let loading = $state(true);
@@ -86,10 +89,15 @@
 
 	function providerName(provider: string): string {
 		if (provider === 'google') {
-			return 'Google / YouTube';
+			return 'YouTube';
 		}
 
 		return provider[0].toUpperCase() + provider.slice(1);
+	}
+
+	function providerAction(provider: string, linking = false): string {
+		const name = providerName(provider);
+		return linking ? `Link ${name}` : `Continue with ${name}`;
 	}
 
 	function providerLogo(provider: string): string {
@@ -375,13 +383,21 @@
 			<h2>Sign in to continue</h2>
 
 			<p class="muted">
-				These providers only establish who you are. StreamBridge never receives your password.
+				Use any listed provider to sign in. YouTube also grants the live-chat access needed for
+				relaying. StreamBridge never receives your password.
 			</p>
 
 			<div class="card-grid">
 				{#each providers as provider (provider)}
-					<button class="button secondary" onclick={() => auth(provider)}>
-						Continue with {providerName(provider)}
+					<button
+						class="provider-auth-button provider-{providerName(provider).toLowerCase()}"
+						type="button"
+						onclick={() => auth(provider)}
+					>
+						<span class="provider-auth-logo" aria-hidden="true">
+							<img src={providerLogo(provider)} alt="" />
+						</span>
+						<span>{providerAction(provider)}</span>
 					</button>
 				{/each}
 			</div>
@@ -409,14 +425,19 @@
 						{#if identity?.avatar_url}
 							<img class="avatar" src={identity.avatar_url} alt="" />
 						{:else}
-							<div class="avatar provider-logo-container">
+							<button
+								class="avatar provider-logo-container"
+								type="button"
+								aria-label={providerAction(provider, true)}
+								onclick={() => auth(provider, 'link')}
+							>
                                 <img
                                     class="provider-logo"
                                     src={providerLogo(provider)}
                                     alt=""
                                     aria-hidden="true"
                                 />
-                            </div>
+							</button>
 						{/if}
 
 						<div>
@@ -431,7 +452,16 @@
 
 						<div class="account-actions">
 							{#if !identity}
-								<button class="button small" onclick={() => auth(provider, 'link')}> Link </button>
+								<button
+									class="provider-auth-button provider-{providerName(provider).toLowerCase()} compact"
+									type="button"
+									onclick={() => auth(provider, 'link')}
+								>
+									<span class="provider-auth-logo" aria-hidden="true">
+										<img src={providerLogo(provider)} alt="" />
+									</span>
+									<span>{providerAction(provider, true)}</span>
+								</button>
 							{:else}
 								<span aria-label="Linked">✓</span>
 								<button
