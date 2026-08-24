@@ -5,6 +5,7 @@
 	--blue: #3975ff;
 	--panel: #12141a;
 	--muted: #a5a8b3;
+	--site-background: radial-gradient(circle at 80vw 4vh, #251417 0, transparent 26rem), #090a0e;
 
 	font-family: 'DM Sans', sans-serif;
 	color: #f7f7fa;
@@ -36,7 +37,7 @@ body::before {
 	width: 100vw;
 	height: 100vh;
 	content: '';
-	background: radial-gradient(circle at 80% 4%, #251417 0, transparent 26rem), #090a0e;
+	background: var(--site-background);
 	pointer-events: none;
 }
 a {
@@ -54,6 +55,9 @@ textarea {
 /* Header and navigation */
 
 .site-header {
+	position: sticky;
+	z-index: 21;
+	top: 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -61,6 +65,9 @@ textarea {
 	height: 76px;
 	margin: auto;
 	padding: 0 24px;
+	background: var(--site-background);
+	background-position: center top;
+	background-size: 100vw 100vh;
 	border-bottom: 1px solid #24262d;
 }
 
