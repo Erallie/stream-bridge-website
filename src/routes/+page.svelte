@@ -11,10 +11,11 @@
 	/>
 	<meta property="og:title" content="StreamBridge — One chat across every platform" />
 	<meta property="og:description" content="Relay livestream chat between Discord, Twitch, YouTube, Kick, and Social Stream Ninja." />
-	<meta property="og:image" content="https://streambridge.gozarproductions.com/logo-white-background.webp" />
-	<meta property="og:image:width" content="1254" />
-	<meta property="og:image:height" content="1254" />
-	<meta property="og:image:type" content="image/webp" />
+	<meta property="og:image" content="https://streambridge.gozarproductions.com/embed-preview.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:image:alt" content="StreamBridge — One conversation, wherever your community chats." />
 	<meta property="og:url" content="https://streambridge.gozarproductions.com" />
 	<meta property="og:site_name" content="StreamBridge" />
 	<meta property="og:type" content="website" />
@@ -22,7 +23,8 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="StreamBridge — One chat across every platform" />
 	<meta name="twitter:description" content="Relay livestream chat between Discord, Twitch, YouTube, Kick, and Social Stream Ninja." />
-	<meta name="twitter:image" content="https://streambridge.gozarproductions.com/logo-white-background.webp" />
+	<meta name="twitter:image" content="https://streambridge.gozarproductions.com/embed-preview.png" />
+	<meta name="twitter:image:alt" content="StreamBridge — One conversation, wherever your community chats." />
 
     <link rel="canonical" href="https://streambridge.gozarproductions.com" />
     </svelte:head
