@@ -1,4 +1,4 @@
-import{C as e,F as t,Q as n,T as r,Z as i,et as a,g as o,tt as s,y as c,z as l}from"../chunks/BSpvLYf6.js";import"../chunks/xihTtKlq.js";import{t as u}from"../chunks/B6Znjcr-.js";var d=`# StreamBridge Privacy Policy\r
+import{C as e,F as t,Q as n,T as r,Z as i,et as a,g as o,tt as s,y as c,z as l}from"../chunks/j2XF5_fh.js";import"../chunks/xihTtKlq.js";import{t as u}from"../chunks/B6Znjcr-.js";var d=`# StreamBridge Privacy Policy\r
 \r
 **Last updated:** August 23, 2026\r
 \r
