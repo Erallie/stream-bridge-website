@@ -12,8 +12,8 @@
 	<meta property="og:title" content="StreamBridge — One chat across every platform" />
 	<meta property="og:description" content="Relay livestream chat between Discord, Twitch, YouTube, Kick, and Social Stream Ninja." />
 	<meta property="og:image" content="https://streambridge.gozarproductions.com/preview-image.png" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
+	<meta property="og:image:width" content="1730" />
+	<meta property="og:image:height" content="909" />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:alt" content="StreamBridge — One conversation, wherever your community chats." />
 	<meta property="og:url" content="https://streambridge.gozarproductions.com" />
