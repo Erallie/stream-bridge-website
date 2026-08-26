@@ -34,6 +34,7 @@
 		discord_enabled: boolean;
 		discord_forward_enabled: boolean;
 		discord_receive_enabled: boolean;
+		youtube_live_notifications: boolean;
 		runtime_status: {
 			ssn: string;
 			direct_platforms: string[];
@@ -268,9 +269,7 @@
 		const warning = deletingAccount
 			? `Disconnect ${name} and permanently delete your StreamBridge account? All saved bridge settings, connections, credentials, sessions, and relay history will be deleted.`
 			: `Disconnect ${name} from StreamBridge? Its authorization and direct relay assignment will be removed.`;
-		if (
-			!confirm(warning)
-		) {
+		if (!confirm(warning)) {
 			return;
 		}
 
@@ -279,9 +278,12 @@
 		disconnectingProvider = provider;
 
 		try {
-			const result = await request<{ account_deleted?: boolean }>(`/dashboard/api/identities/${provider}`, {
-				method: 'DELETE'
-			});
+			const result = await request<{ account_deleted?: boolean }>(
+				`/dashboard/api/identities/${provider}`,
+				{
+					method: 'DELETE'
+				}
+			);
 			await load();
 			accountMessage = result.account_deleted
 				? 'Your StreamBridge account and all saved data were deleted'
@@ -310,11 +312,11 @@
 			});
 
 			saved = 'Bridge saved';
-            setTimeout(() => {
-                if (saved === 'Bridge saved') {
-                    saved = '';
-                }
-            }, 10000);
+			setTimeout(() => {
+				if (saved === 'Bridge saved') {
+					saved = '';
+				}
+			}, 10000);
 		} catch (caughtError) {
 			saveError = caughtError instanceof Error ? caughtError.message : 'Could not save workspace';
 		}
@@ -359,7 +361,7 @@
 
 <svelte:head>
 	<title>Dashboard — StreamBridge</title>
-    <link rel="canonical" href="https://streambridge.gozarproductions.com/dashboard" />
+	<link rel="canonical" href="https://streambridge.gozarproductions.com/dashboard" />
 </svelte:head>
 
 <div class="page">
@@ -434,12 +436,7 @@
 								aria-label={`Link ${providerName(provider)}`}
 								onclick={() => auth(provider, 'link')}
 							>
-                                <img
-                                    class="provider-logo"
-                                    src={providerLogo(provider)}
-                                    alt=""
-                                    aria-hidden="true"
-                                />
+								<img class="provider-logo" src={providerLogo(provider)} alt="" aria-hidden="true" />
 							</button>
 						{/if}
 
@@ -545,7 +542,8 @@
 								<h3>Social Stream Ninja Connection</h3>
 
 								<p class="muted">
-									Connect this bridge to Social Stream Ninja to include additional streaming platforms and let SSN handle their relay while the session is available.
+									Connect this bridge to Social Stream Ninja to include additional streaming
+									platforms and let SSN handle their relay while the session is available.
 								</p>
 							</div>
 
@@ -574,7 +572,9 @@
 										>
 											{#if showSsnSessionId}
 												<svg viewBox="0 0 24 24" aria-hidden="true">
-													<path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9.5 5.1 9.5 5.1a13.2 13.2 0 0 1-3 3.5M6.6 6.7A15.8 15.8 0 0 0 2.5 12s4 5 9.5 5a10 10 0 0 0 3.3-.6" />
+													<path
+														d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9.5 5.1 9.5 5.1a13.2 13.2 0 0 1-3 3.5M6.6 6.7A15.8 15.8 0 0 0 2.5 12s4 5 9.5 5a10 10 0 0 0 3.3-.6"
+													/>
 												</svg>
 											{:else}
 												<svg viewBox="0 0 24 24" aria-hidden="true">
@@ -600,14 +600,16 @@
 									/>
 
 									<span class="muted">
-										Enter platforms routed through SSN, separated by commas. This also helps prevent duplicate reflections. Do not add <code>discord</code>; StreamBridge handles it separately. See the
-                                        <a
-                                            href="https://socialstream.ninja/docs/supported-sites.html"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            supported SSN platforms
-                                        </a>.
+										Enter platforms routed through SSN, separated by commas. This also helps prevent
+										duplicate reflections. Do not add <code>discord</code>; StreamBridge handles it
+										separately. See the
+										<a
+											href="https://socialstream.ninja/docs/supported-sites.html"
+											target="_blank"
+											rel="noreferrer"
+										>
+											supported SSN platforms
+										</a>.
 									</span>
 								</label>
 							</div>
@@ -660,7 +662,6 @@
 											</label>
 										{/each}
 
-
 										<label class="check">
 											<input
 												type="checkbox"
@@ -677,7 +678,8 @@
 									</div>
 
 									<p class="platform-footnote">
-										It may take up to five minutes for StreamBridge to detect a new YouTube livestream.
+										It may take up to five minutes for StreamBridge to detect a new YouTube
+										livestream.
 									</p>
 								</div>
 
@@ -755,6 +757,12 @@
 										<input type="checkbox" bind:checked={item.transport_announcements} />
 
 										Announce switches between SSN and direct relay in configured Discord channels
+									</label>
+
+									<label class="check full">
+										<input type="checkbox" bind:checked={item.youtube_live_notifications} />
+
+										Notify this Discord channel when a new YouTube live broadcast is detected
 									</label>
 								{/if}
 							</div>
