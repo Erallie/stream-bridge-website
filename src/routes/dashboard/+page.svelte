@@ -388,8 +388,7 @@
 			<h2>Sign in to continue</h2>
 
 			<p class="muted">
-				Use any listed provider to sign in. YouTube also grants the live-chat access needed for
-				relaying. StreamBridge never receives your password.
+				Use any listed provider to sign in. StreamBridge never receives your password.
 			</p>
 
 			<div class="card-grid sign-in-options">
